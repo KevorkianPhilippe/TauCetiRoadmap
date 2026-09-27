@@ -33,5 +33,52 @@ injective continuous extension makes its domain a Jordan domain (TauCeti#1580), 
 "only if" half of the continuity theorem (TauCeti#1587). The extension itself is not established;
 what landed towards it is machinery — cluster sets, uniformly locally connected boundaries, the area
 formula (TauCeti#1555, TauCeti#1624, TauCeti#1583). Schwarz–Christoffel is untouched. Per the
-roadmap's own coordination clause, the L0–L3 material is a shim to be retired once the Mathlib proof
-lands.
+roadmap, the L0–L3 material is reproved from Mathlib's, and its consumers refactored, if the
+Mathlib proof lands.
+
+<!--tauceti-progress:v1 {"from_sha":"6919462d4134c7850ded5c71cc7a2e8a9054a2d0","prs":[1636,1642,1646,1648,1655,1657,1667,1668,1673,1675,1687,1701,1732,1749,1750,1760,1765,1768,1784,1788,1798,1800,1812,1828,1832,1835,1837,1851,1855,1858,1884,1948,1950,1966,1969,1970,1973,1979,1981,1983,1988,2001,2002,2008,2018,2019,2028,2046,2047,2059,2066,2068,2076,2089,2090,2100,2110,2112,2113,2125,2126,2157,2160,2205,2215,2257,2260,2284,2314,2331,2354,2366,2425,2430,2458,2509,2527,2535],"roadmap":"ConformalMapping","to_sha":"03fcee5c26082d455072bee2d3044ce5bec908cd"}-->
+## ConformalMapping: 2026-08-01 to 2026-08-10 (`6919462` to `03fcee5`)
+
+The window's main effort was the length–area method, the tool the open half of Carathéodory's
+continuity theorem needs. The length–area inequality bounds the weighted total of the image lengths
+of the circles about a point by the area of the image
+(<https://taucetiproject.github.io/TauCeti/docs/TauCeti/Analysis/Complex/Conformal/LengthArea.html#TauCeti.lintegral_circleImageLength_sq_div_le_lintegral_enorm_deriv_sq>),
+and Wolff's lemma extracts from it one short circle at some radius between any two (TauCeti#1636,
+<https://taucetiproject.github.io/TauCeti/docs/TauCeti/Analysis/Complex/Conformal/LengthArea.html#TauCeti.exists_circleImageLength_sq_lt>).
+On it rests a chain about circular crosscuts of a disc: one of finite image length has a limit at
+each end, its closed image meets the boundary of the image domain in exactly two points, and, when
+that boundary is a Jordan curve, arbitrarily short image crosscuts lie on small Jordan curves
+(TauCeti#2527,
+<https://taucetiproject.github.io/TauCeti/docs/TauCeti/Analysis/Complex/Conformal/Crosscut/SmallJordanCurve.html#TauCeti.exists_isJordanCurve_superset_closure_image_ball_inter_sphere_diam_le>).
+The theorem all of this is for — that the Riemann map of a Jordan domain extends continuously to the
+closure — has not landed.
+
+The Poincaré disc became a geometry rather than a metric space. Its distance acquired closed forms,
+and it is the least hyperbolic length of a path joining its two arguments
+(<https://taucetiproject.github.io/TauCeti/docs/TauCeti/Analysis/Complex/Conformal/Hyperbolic/Length.html#TauCeti.hyperbolicDist_le_hyperbolicLength>).
+Its geodesics are exactly the Euclidean diameters and the arcs of circles meeting the unit circle at
+right angles
+(<https://taucetiproject.github.io/TauCeti/docs/TauCeti/Analysis/Complex/Conformal/Poincare/OrthogonalCircle.html#TauCeti.PoincareDisc.exists_range_coe_toUnitDisc_geodesicLine_eq_iff>),
+and its isometries exactly the disc automorphisms and their conjugates
+(<https://taucetiproject.github.io/TauCeti/docs/TauCeti/Analysis/Complex/Conformal/Poincare/Isometry/Classification.html#TauCeti.PoincareDisc.isometry_iff_exists_eq_unitDiscStandardAutomorphismIsometryEquiv_or_comp_star>);
+a holomorphic self-map is nonexpanding, and is either a strict contraction between every pair of
+distinct points or one of those automorphisms.
+
+Older layers were re-cut. Rouché and the argument principle gained winding-number forms for
+null-homologous cycles, including the dog-on-a-leash statement
+(<https://taucetiproject.github.io/TauCeti/docs/TauCeti/Analysis/Complex/Conformal/Rouche.html#TauCeti.rouche_symm_windingNumber_comp>);
+Montel became an equivalence, local boundedness being the same as relative compactness in `C(Ω, E)`
+(<https://taucetiproject.github.io/TauCeti/docs/TauCeti/Analysis/Complex/Conformal/Montel/Precompact.html#TauCeti.isCompact_closure_range_iff_isLocallyBoundedOn>);
+and analytic continuation acquired predicates for continuing along a path and inside a domain
+(<https://taucetiproject.github.io/TauCeti/docs/TauCeti/Analysis/Complex/Conformal/Continuation/Basic.html#TauCeti.ContinuesInside>),
+closed under sums, products and derivatives, with concatenation, reparametrisation and monodromy
+along free homotopies.
+
+<!--tauceti-progress:v1 {"from_sha":"03fcee5c26082d455072bee2d3044ce5bec908cd","prs":[2092,2660,2679,2698,3131,3147,3155,3156,3408,3426,3813,3855,3957,4002,4087,4151,4168,4576,4638,4701,4778,5003,5403,5497,5599,5653,5866,5895,6206,6226],"roadmap":"ConformalMapping","to_sha":"ae69ef93ae1b853b89b7e0966d5895c901e370f2"}-->
+## ConformalMapping: 2026-08-10 to 2026-09-10 (`03fcee5` to `ae69ef9`)
+
+[Carathéodory’s boundary correspondence for Jordan domains](https://taucetiproject.github.io/TauCeti/docs/TauCeti/Analysis/Complex/Conformal/Jordan/Approach.html#TauCeti.exists_homeomorph_closedBall_closure_of_isJordanCurve_frontier) is now complete: a Riemann map from the disc onto a bounded domain with Jordan-curve boundary extends to a homeomorphism of the closures. The forward [continuity theorem](https://taucetiproject.github.io/TauCeti/docs/TauCeti/Analysis/Complex/Conformal/Caratheodory.html#TauCeti.exists_continuousOn_closedBall_eqOn_of_isJordanCurve_frontier) was joined to boundary injectivity through locally preconnected approach regions; the plane-separation input includes [Janiszewski’s theorem](https://taucetiproject.github.io/TauCeti/docs/TauCeti/Analysis/Complex/PlaneSeparation/Basic.html#TauCeti.janiszewski).
+
+Schwarz–Christoffel theory has begun in earnest. The [integrand](https://taucetiproject.github.io/TauCeti/docs/TauCeti/Analysis/Complex/Conformal/SchwarzChristoffel/Integrand.html#TauCeti.schwarzChristoffelIntegrand) is holomorphic and nonvanishing on the upper half-plane, its [normalized primitive](https://taucetiproject.github.io/TauCeti/docs/TauCeti/Analysis/Complex/Conformal/SchwarzChristoffel/Primitive.html#TauCeti.schwarzChristoffelPrimitive) is conformal there, and the [canonical boundary map](https://taucetiproject.github.io/TauCeti/docs/TauCeti/Analysis/Complex/Conformal/SchwarzChristoffel/Boundary.html#TauCeti.schwarzChristoffelBoundary) is continuous at prevertices of total exponent greater than `-1`. Between prevertices it traces injective straight edges with the expected change of angle, and the integrand now has its leading prevertex asymptotic. There is not yet a theorem identifying the primitive globally with a prescribed polygon.
+
+Analytic continuation was also connected to the étalé space of holomorphic germs: [continuation along a path is equivalent to a continuous germ lift](https://taucetiproject.github.io/TauCeti/docs/TauCeti/Analysis/Complex/Conformal/Continuation/Etale.html#TauCeti.isAnalyticContinuationAlong_iff_continuousOn_germPoint), and [continuation inside a simply connected domain is path-independent](https://taucetiproject.github.io/TauCeti/docs/TauCeti/Analysis/Complex/Conformal/GlobalBranch.html#TauCeti.ContinuesInside.eventuallyEq_at_one).
