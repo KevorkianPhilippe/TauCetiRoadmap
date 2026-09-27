@@ -825,10 +825,9 @@ theorem. Their witness agreement in this setting is definitional.
 `ContractableLaw.map_prefixProj_of_strictMono` supplies the finite-marginal bridge needed to view
 the coordinate process as `Contractable`.
 
-The exchangeable case follows through `ExchangeableLaw.contractableLaw`.
-
 This target does not assert equality of the invariant and tail σ-algebras or pointwise equality of
-the witnesses. The comparison belongs downstream of the route proofs.
+the witnesses. No separate `ExchangeableLaw` corollary is a target; exchangeable laws are covered
+through `ExchangeableLaw.contractableLaw`. The comparison belongs downstream of the route proofs.
 
 ### Layer 7: public API and examples
 
