@@ -40,9 +40,13 @@ These are pinned. Every item below uses them.
 - **Poisson bracket:** `{F, G} x = mvfderiv I F x (X_G x)`, so that `{F, G} = ω(X_F, X_G)`
   when `F` is Hamiltonian, and `d/dt F(γ t) = {F, H}(γ t)` along an integral curve `γ` of `X_H`.
   With Mathlib's bracket these conventions give `X_{{F, G}} = -[X_F, X_G]`.
-- **Canonical model.** On `V × Module.Dual ℝ V`, Tau Ceti's `cotangentSymplecticForm` is
-  `ω((q, α), (q', β)) = β q - α q'`. Its Hamiltonian vector fields are `(∂H/∂α, -∂H/∂q)`
-  (`q̇ = ∂H/∂p`, `ṗ = -∂H/∂q`), and the coordinate functions satisfy `{q_i, p_j} = δ_ij`.
+- **Canonical model.** The manifold is `V × StrongDual ℝ V`, since a manifold needs a normed model
+  space and `Module.Dual ℝ V` carries no norm in Mathlib. Tau Ceti's
+  `strongDualCotangentSymplecticForm` on it is `ω((q, α), (q', β)) = β q - α q'`, the same formula
+  as the algebraic `cotangentSymplecticForm` on `V × Module.Dual ℝ V`. Its Hamiltonian vector
+  fields are `(∂H/∂α, -∂H/∂q)` (`q̇ = ∂H/∂p`, `ṗ = -∂H/∂q`), where `∂H/∂α` lies in the bidual and is
+  read in `V` through the canonical isomorphism when `V` is finite-dimensional; the coordinate
+  functions satisfy `{q_i, p_j} = δ_ij`.
 - **Infinitesimal action** of a real Lie algebra `𝔤`: a linear map `Z ↦ Z_M` into smooth vector
   fields with `(⁅Z, Z'⁆)_M = -[Z_M, Z'_M]`. This is the relation satisfied by the fundamental vector
   fields of a left action; Layer 3 verifies it on each example.
@@ -164,9 +168,10 @@ both consume Layer 1 and may proceed in parallel.
   related by the Leibniz rule. The map `F ↦ X_F` is linear, sends `{F, G}` to `-[X_F, X_G]`, and
   has as kernel the functions with `dF = 0`: the constants when `M` is preconnected.
 - **Examples and acceptance tests.**
-  - On a real finite-dimensional `V`, `SymplecticForm.constSmooth cotangentSymplecticForm` on
-    `V × Module.Dual ℝ V` is symplectic.
-  - Its Hamiltonian vector fields are `(∂H/∂α, -∂H/∂q)`.
+  - On a real finite-dimensional `V`, `SymplecticForm.constSmooth strongDualCotangentSymplecticForm`
+    on `V × StrongDual ℝ V` is symplectic.
+  - Its Hamiltonian vector fields are `(∂H/∂α, -∂H/∂q)`, with `∂H/∂α` read in `V` through the
+    canonical isomorphism of `V` with its bidual.
   - For a basis of `V`, the coordinate functions satisfy `{q_i, p_j} = δ_ij`, `{q_i, q_j} = 0` and
     `{p_i, p_j} = 0`.
   - On any real Banach space `V`, the canonical form on `V × StrongDual ℝ V`, packaged as a
@@ -238,8 +243,9 @@ both consume Layer 1 and may proceed in parallel.
     `skewAdjointLieSubalgebra` of `ω` acts by `A ↦ (x ↦ A x)`.
     - The moment map is `μ_A(x) = ½ ω(A x, x)`.
     - It is equivariant: the cocycle is zero.
-  - *Cotangent lift.* `Module.End ℝ V` acts on `V × Module.Dual ℝ V` by
-    `A ↦ ((q, α) ↦ (A q, -(α ∘ₗ A)))`.
+  - *Cotangent lift.* For finite-dimensional `V`, `Module.End ℝ V` acts on `V × StrongDual ℝ V` by
+    `A ↦ ((q, α) ↦ (A q, -(α ∘L A)))`, with `A` read as a continuous linear map
+    (`LinearMap.toContinuousLinearMap`).
     - The moment map is `μ_A(q, α) = α (A q)`.
     - It is equivariant.
 - **Milestone 3: Souriau's mass theorem, algebraic form.**
