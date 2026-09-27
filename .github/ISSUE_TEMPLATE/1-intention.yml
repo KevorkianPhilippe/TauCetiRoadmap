@@ -50,6 +50,7 @@ body:
         - NumberFieldArithmetic
         - OneParameterSemigroups
         - OptimalTransport
+        - OrthogonalSpinGroups
         - PDE
         - PolynomialGaloisGroups
         - ProfiniteCohomology
@@ -61,7 +62,6 @@ body:
         - StablePeriodicCurved
         - StableReduction
         - StandardDistributions
-        - UniversalCovers
         - ZigzagPreprojective
     validations:
       required: true

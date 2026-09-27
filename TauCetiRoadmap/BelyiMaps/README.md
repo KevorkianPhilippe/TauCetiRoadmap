@@ -123,9 +123,9 @@ roadmap; **this roadmap owns it** (Layer 3.2), together with the inverse-class o
 `ConjClasses` it needs.
 
 **Universal covers.** The covering-space classification, deck transformation groups, and the
-`N(H)/H` deck-group theorem belong to
-[UniversalCovers](../UniversalCovers/README.md) (milestones 4, 5, 7, 8 there). This roadmap
-consumes them and builds no universal cover. Two conventions from that roadmap bind here: deck
+`N(H)/H` deck-group theorem belong to the completed
+[UniversalCovers](../../Completed/UniversalCovers/README.md) roadmap (milestones 4, 5, 7, 8
+there). This roadmap consumes them and builds no universal cover. Two conventions from that roadmap bind here: deck
 groups are identified with `(π₁)ᵐᵒᵖ` (its milestone 5), and basepoint change acts on recovered
 subgroups by conjugation (its milestone 7). The constructive direction this roadmap needs — a
 cover of the base built *from* a permutation action — is Layer 6.2's associated cover
