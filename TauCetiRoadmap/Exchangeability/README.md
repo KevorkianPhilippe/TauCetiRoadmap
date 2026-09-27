@@ -887,37 +887,47 @@ the general martingale route.
 #### Proof-route import independence
 
 The three proofs may share neutral definitions and genuinely generic common-ending infrastructure,
-but no route may acquire another route's proof-specific closure transitively. In particular:
+but no route may acquire another route's proof-specific machinery transitively.
+
+The following Tau Ceti modules carry the default route's reverse-martingale machinery. They are
+prohibited transitive dependencies of the L² and Koopman routes:
+
+```text
+TauCeti.Probability.DeFinetti.Theorem
+TauCeti.Probability.DeFinetti.BlockFactorization
+TauCeti.Probability.DeFinetti.TailFactorization
+TauCeti.Probability.DeFinetti.FutureFactorization
+TauCeti.Probability.DeFinetti.PrefixDeletion
+TauCeti.Probability.DeFinetti.JointRectangle
+TauCeti.Probability.Martingale.*
+TauCeti.Probability.Process.Tail.ReverseFiltration
+```
 
 | Consumer | Required import boundary |
 | --- | --- |
 | Default route | Must not import `ViaL2`, `ViaKoopman`, `CanonicalMixture`, or `WitnessAgreement`. |
-| L² route | Must not import the default endpoint or its route-specific martingale machinery, `ViaKoopman`, `CanonicalMixture`, or `WitnessAgreement`. |
-| Koopman route | Must not import the default-route-specific closure, `ViaL2`, `CanonicalMixture`, or `WitnessAgreement`. |
+| L² route | Must not import the prohibited transitive dependencies above, `ViaKoopman`, `CanonicalMixture`, or `WitnessAgreement`. |
+| Koopman route | Must not import the prohibited transitive dependencies above, `ViaL2`, `CanonicalMixture`, or `WitnessAgreement`. |
 | `CanonicalMixture` | May import the default-route and L² closures. It must not be imported by any route. |
 | `WitnessAgreement` | May import the default-route closure, including `TauCeti.Probability.DeFinetti.JointRectangle`, and the `ViaKoopman` closure. It must not be imported by any route. |
 | `TauCeti.Probability.DeFinetti` | May aggregate all three routes, `CanonicalMixture`, and `WitnessAgreement`. |
 | `TauCeti.Probability.Exchangeability` | Must remain below every representation route and coherence module. |
 
-`TauCeti.Probability.DeFinetti.JointRectangle` belongs to the default-route-specific closure.
-`TauCeti.Probability.DeFinetti.ConditionalCommonEnding` is the neutral joint-rectangle ending from
-Layer 1, shared by the L², Koopman, and default routes. The comparison module `WitnessAgreement`
-may import both.
+`TauCeti.Probability.DeFinetti.JointRectangle` belongs to the default route's proof-specific
+machinery. `TauCeti.Probability.DeFinetti.ConditionalCommonEnding` is the neutral joint-rectangle
+ending from Layer 1, shared by the L², Koopman, and default routes.
 
 `CanonicalMixture` is a downstream identification module: it identifies the law of the canonical
 directing measure with the mixing laws supplied by the representation and correspondence APIs.
 Its L² input names `directingProbabilityMeasure μ X` as the witness on an arbitrary measurable
-sample space. Like `WitnessAgreement`, it may combine route closures while remaining outside
-every proof route's transitive imports.
+sample space, so it combines the default-route and L² closures rather than belonging to either
+route.
 
-Neutral shared infrastructure is excepted from the route-specific prohibitions. In particular, the
-routes may share the representation predicates, path-law bridges, the canonical directing-measure
-definitions, and genuinely generic common endings. The prohibition concerns another route's
-proof-specific machinery.
-
-`TauCeti.Probability.DeFinetti` is the designated aggregation boundary: it may import all three
-route endpoints and both downstream identification modules, `CanonicalMixture` and
-`WitnessAgreement`. Neither identification module may be imported by any route.
+Neutral shared infrastructure is otherwise excepted from the route-specific prohibitions. In
+particular, the routes may share the representation predicates, path-law bridges, the canonical
+directing-measure definitions, and genuinely generic common endings. This exception does not
+override the prohibited transitive dependencies above, even for generic modules such as
+`TauCeti.Probability.Martingale.Reverse`.
 
 ### Layer 8: generalized exchangeability and representation theorems
 
