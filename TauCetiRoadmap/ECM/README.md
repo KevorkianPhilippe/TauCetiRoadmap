@@ -98,10 +98,15 @@ xADD(P,Q,R) = (Z_R (a+b)², X_R (a−b)²).
 ```
 
 Prove these represent doubling and addition when the output pair is nonzero,
-with `D ≠ 0` and `N/D=(A+2)/4` for doubling. Establish the exact vanishing locus
-of each output on valid inputs. In particular differential addition is not a total
-operation at a zero or order-two difference. Provide explicit exceptional-case lemmas
-and a checked interface reporting an invalid pair, rather than quotienting `(0,0)`.
+with `D ≠ 0` and `N/D=(A+2)/4` for doubling. Over a nonsingular Montgomery
+curve in odd characteristic, prove that doubling a valid pair never produces
+`(0,0)`, and that differential addition on points with `R=P−Q` produces
+`(0,0)` exactly when `R` is infinity or the distinguished two-torsion point
+with affine coordinates `(0,0)`. Other points of order two need not be exceptional:
+if `T=(r,0)` lies on the curve with `r ≠ 0`, then `xADD(T,O,T)` represents `T`,
+where `O` is the identity. Provide explicit exceptional-case lemmas and a
+checked interface reporting an invalid pair,
+rather than quotienting `(0,0)`.
 The cleared-coordinate identities, including degenerate outputs, are separate lemmas.
 
 ### 5. Montgomery ladder
