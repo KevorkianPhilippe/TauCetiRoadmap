@@ -176,8 +176,9 @@ both consume Layer 1 and may proceed in parallel.
     `{p_i, p_j} = 0`.
   - On any real Banach space `V`, the canonical form on `V × StrongDual ℝ V`, packaged as a
     constant `SmoothTwoForm` through `SmoothTwoForm.const`, is symplectic (weakly nondegenerate)
-    and is strongly nondegenerate exactly when `V` is reflexive. This constant packaging is itself
-    a target.
+    and is strongly nondegenerate exactly when `V` is reflexive, that is, when
+    `NormedSpace.inclusionInDoubleDual ℝ V` is surjective. This constant packaging is itself a
+    target.
 
 ### Layer 2: dynamics
 
@@ -217,8 +218,10 @@ both consume Layer 1 and may proceed in parallel.
   `(⁅Z, Z'⁆)_M = -[Z_M, Z'_M]`. It is Hamiltonian when it admits a moment map.
 - **Moment maps.**
   - The predicate `IsMomentMap ω a μ`.
-  - Uniqueness: two moment maps of the same action differ by a function `M → Module.Dual ℝ 𝔤`
-    whose differential vanishes, hence by a constant when `M` is preconnected.
+  - Uniqueness: two moment maps `μ`, `μ'` of the same action differ by a function
+    `ν : M → Module.Dual ℝ 𝔤` each of whose components `x ↦ ν x Z` has vanishing differential
+    (`Module.Dual ℝ 𝔤` carries no norm, so the statement is componentwise), hence by a constant
+    when `M` is preconnected.
   - **Noether's theorem:** if `H` is invariant (`dH (Z_M) = 0`), then `{μ_Z, H} = 0` and `μ_Z` is
     constant along every integral curve of `X_H`.
 - **The cocycle.** Let `μ` be a moment map on a preconnected `M`.
