@@ -116,11 +116,9 @@ These are pinned. Every item below uses them.
 - The invariant formula for a closed two-form on a manifold.
 - Symplectomorphisms between manifolds, conservation laws, and symplecticity of Hamiltonian flows.
 - Infinitesimal actions, moment maps, their cocycle and its class.
-- 2-coboundaries and `H²` of a Lie algebra with trivial coefficients. Build them in the shape of
-  the open Mathlib pull request
-  [mathlib4#43991](https://github.com/leanprover-community/mathlib4/pull/43991), with declarations
-  `twoCoboundary` and `secondCohomology` in `LieModule.Cohomology`, so that its landing is a
-  deletion plus an import.
+- 2-coboundaries and `H²` of a Lie algebra with trivial coefficients, which Mathlib does not
+  have: `twoCoboundary` (the range of `d₁₂`) and `secondCohomology` (the 2-cocycles modulo the
+  2-coboundaries) in `LieModule.Cohomology`, next to Mathlib's `twoCocycle`.
 - The Galilean Lie algebra and the space of motions of a free particle.
 
 ## The build, in layers
