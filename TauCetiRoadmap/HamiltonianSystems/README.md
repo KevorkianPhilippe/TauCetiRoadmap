@@ -84,11 +84,13 @@ These are pinned. Every item below uses them.
   - Nondegeneracy and symplectic forms: `SmoothTwoForm.IsNondegenerate`,
     `SmoothTwoForm.isNondegenerate_iff_separatingLeft`, `SmoothTwoForm.IsSymplectic`,
     `SymplecticForm.constSmooth`, `SymplecticForm.isSymplectic_constSmooth`.
-  - The linear symplectic form `TauCeti.SymplecticForm` and `SymplecticForm.IsSymplectomorphism`
-    (a predicate on a linear equivalence).
+  - The linear symplectic form `TauCeti.SymplecticForm`, `SymplecticForm.IsSymplectomorphism` (a
+    predicate on a linear equivalence), `SymplecticForm.transport`, and the binary product
+    `SymplecticForm.prod`.
   - Cotangent models: `cotangentSymplecticForm` on `V × Module.Dual ℝ V`;
     `strongDualCotangentSymplecticForm` on `V × StrongDual ℝ V`, for any normed `V`;
-    `cotangentLiouvilleForm`.
+    `cotangentLiouvilleForm`; `stdSymplecticForm` on `V × V` for an inner product space `V`, with
+    `isSymplectomorphism_cotangentModelEquiv`.
 - **Tau Ceti, flows.**
   - `maximalIntegralCurve`, `maximalIntegralCurveInterval`, `maximalIntegralCurveFlowDomain`,
     `isOpen_maximalIntegralCurveFlowDomain`, the flow law `maximalIntegralCurve_add`, and
@@ -115,8 +117,8 @@ These are pinned. Every item below uses them.
 - Hamiltonian vector fields, Hamiltonian functions, and the Poisson bracket on a weakly symplectic
   Banach manifold; the Lie algebra of Hamiltonian functions.
 - The invariant formula for a closed two-form on a manifold.
-- Symplectic maps and symplectomorphisms between manifolds, conservation laws, and symplecticity
-  of Hamiltonian flows.
+- The pullback of a two-form, symplectic maps and symplectomorphisms between manifolds,
+  conservation laws, and symplecticity of Hamiltonian flows.
 - Infinitesimal actions, moment maps, their cocycle and its class.
 - 2-coboundaries and `H²` of a Lie algebra with trivial coefficients, which Mathlib does not
   have: `twoCoboundary` (the range of `d₁₂`) and `secondCohomology` (the 2-cocycles modulo the
@@ -151,6 +153,9 @@ both consume Layer 1 and may proceed in parallel.
 - **Strong nondegeneracy.**
   - `ω` is strongly nondegenerate when, at every point, `v ↦ ω x v` is onto
     `TangentSpace I x →L[ℝ] ℝ`.
+  - A strongly nondegenerate form is nondegenerate (`IsStronglyNondegenerate.isNondegenerate`):
+    if `ω x w = 0`, every `ω x v` vanishes at `w` by antisymmetry, hence every continuous linear
+    form does, and `w = 0` by the Hahn-Banach theorem.
   - A nondegenerate form on a finite-dimensional manifold is strongly nondegenerate.
   - For a strongly nondegenerate `ω`, every smooth function is Hamiltonian and
     `hamiltonianVectorField ω F` is smooth. The inverse of `v ↦ ω x v` is a continuous linear
@@ -203,9 +208,13 @@ both consume Layer 1 and may proceed in parallel.
   `{F, H} = 0`. First integrals are closed under the Poisson bracket (Poisson's theorem, from the
   Jacobi identity).
 - **Symplectic maps and symplectomorphisms.**
+  - The pullback `SmoothTwoForm.pullback` of a smooth two-form `ω'` on `M'` along a smooth map
+    `φ : M → M'`: `(φ^* ω') x v w = ω' (φ x) (dφ v) (dφ w)`, with `dφ = mfderiv I I' φ x`. It is
+    compatible with the identity, composition, `add` and `smul`, and the pullback of a closed
+    form is closed (`pullback_isClosed`).
   - A map `φ : M → M'` is a symplectic map from `ω` to `ω'` when
-    `ω' (φ x) (dφ v) (dφ w) = ω x v w` everywhere, with `dφ = mfderiv I I' φ x`. The model spaces
-    of `M` and `M'` may differ: symplectic embeddings are symplectic maps.
+    `ω' (φ x) (dφ v) (dφ w) = ω x v w` everywhere; for `φ` smooth, exactly when `φ^* ω' = ω`. The
+    model spaces of `M` and `M'` may differ: symplectic embeddings are symplectic maps.
   - A symplectomorphism from `ω` to `ω'` is a `Diffeomorph` (`φ : M ≃ₘ^n⟮I, I'⟯ M'`, with `n ≠ 0`)
     that is a symplectic map. Like `SymplecticForm.IsSymplectomorphism`, it is a predicate on an
     equivalence.
@@ -220,6 +229,11 @@ both consume Layer 1 and may proceed in parallel.
   - A linear symplectomorphism `e` of finite-dimensional symplectic vector spaces
     (`SymplecticForm.IsSymplectomorphism`) is a symplectomorphism of the constant forms, as the
     diffeomorphism `e.toContinuousLinearEquiv.toDiffeomorph`.
+  - Open subsets. For `U : TopologicalSpace.Opens M`, the restriction of `ω` to `U` is its
+    pullback along `Subtype.val`, and is symplectic when `ω` is. For `ω` nondegenerate,
+    `Subtype.val` transports Hamiltonian vector fields and Poisson brackets as a symplectomorphism
+    does. A canonical transformation between open subsets `U` of `M` and `U'` of `M'` is a
+    symplectomorphism between `U` and `U'` for the restricted forms.
 - **The variational equation.** Let `X` be a smooth vector field on a finite-dimensional,
   boundaryless, Hausdorff manifold, `x ∈ M`, `v ∈ T_x M`, and `φ_s = fun y ↦ maximalIntegralCurve X y s`.
   For `s₀` with `(x, s₀) ∈ maximalIntegralCurveFlowDomain X`, write `X̃` for the coordinate
@@ -232,6 +246,10 @@ both consume Layer 1 and may proceed in parallel.
   `φ_t = fun y ↦ maximalIntegralCurve X_H y t`. Then
   `ω (φ_t x) (dφ_t v) (dφ_t w) = ω x v w`. Also, `H ∘ φ_t = H` and every first integral is
   preserved.
+- **Liouville's theorem.** For a symplectic form on a finite-dimensional real vector space `V`
+  (`SymplecticForm.constSmooth`), `H` smooth, and `(x, t)` in the flow domain of `X_H`,
+  `(fderiv ℝ φ_t x).det = 1`. Hence `φ_t` preserves the additive Haar measure `μ` of `V`:
+  `μ (φ_t '' s) = μ s` for every measurable set `s` on which `φ_t` is defined.
 
 ### Layer 3: infinitesimal symmetries and moment maps
 
@@ -260,7 +278,9 @@ both consume Layer 1 and may proceed in parallel.
     disappears on the central extension.
 - **Examples and acceptance tests.**
   - *Translations.* The abelian Lie algebra `V` acts on a symplectic Banach space `(V, ω)` by
-    constant vector fields.
+    constant vector fields. Its carrier is a type synonym of `V` with the zero bracket (`LieRing`,
+    `LieAlgebra ℝ`, `IsLieAbelian`), built here: Mathlib has no Lie algebra structure with zero
+    bracket on a bare module.
     - The moment map is `μ_Z(x) = ω(Z, x)`.
     - The cocycle is `c = ω`, and its class is nonzero when `ω ≠ 0`, in every dimension: the
       Heisenberg extension.
@@ -283,6 +303,14 @@ both consume Layer 1 and may proceed in parallel.
     `(Fin 3 → ℝ) × (Fin 3 → ℝ)` (position `q` and momentum `p` at time `0` of the straight line
     `t ↦ q + (t / m) • p`), with `ω((q, p), (q', p')) = p' ⬝ᵥ q - p ⬝ᵥ q'`: the canonical form of
     the Standing conventions, through the identification of `Fin 3 → ℝ` with its dual by `⬝ᵥ`.
+    - Positions and momenta are in `Fin 3 → ℝ`, where `⨯₃` and `⬝ᵥ` are defined; it carries no
+      inner product.
+    - The form is the transport (`SymplecticForm.transport`) of `cotangentSymplecticForm` on
+      `(Fin 3 → ℝ) × Module.Dual ℝ (Fin 3 → ℝ)` along `(q, p) ↦ (q, p ⬝ᵥ ·)`, that is Mathlib's
+      `dotProductEquiv ℝ (Fin 3)` on the second factor, made a smooth form by
+      `SymplecticForm.constSmooth`.
+    - Through `EuclideanSpace.equiv (Fin 3) ℝ` on each factor, it is Tau Ceti's `stdSymplecticForm`
+      on `EuclideanSpace ℝ (Fin 3) × EuclideanSpace ℝ (Fin 3)`; this comparison is a target.
   - **The action** of `Z = (ρ, β, γ, ε)` is the transport of its action on space-time to straight
     lines: `Z_M(q, p) = (ρ ⨯₃ q + γ - (ε / m) • p, ρ ⨯₃ p + m • β)`.
   - **Targets.**
@@ -296,9 +324,11 @@ both consume Layer 1 and may proceed in parallel.
       `(-c'(B e₁, T e₁)) • f₀`, and `f₀` is not a coboundary.
     - The class of the free particle of mass `m` is `m [f₀]`: nonzero, and proportional to the
       mass.
-  - **The `N`-particle version.** For `N` free particles of masses `m_j`, on the product of their
-    spaces of motions with the sum of the forms and the diagonal action, the class is
-    `(Σ m_j) [f₀]`: the total mass.
+  - **The `N`-particle version.** For free particles of masses `m_j`, indexed by a `Fintype` `ι`,
+    on the product `ι → (Fin 3 → ℝ) × (Fin 3 → ℝ)` of their spaces of motions with the sum of the
+    forms and the diagonal action, the class is `(Σ m_j) [f₀]`: the total mass. The sum of the
+    forms is `SymplecticForm.pi`, the product of a finite family of linear symplectic forms, built
+    here next to Tau Ceti's binary `SymplecticForm.prod`.
 
 ## Boundaries
 
@@ -315,9 +345,13 @@ both consume Layer 1 and may proceed in parallel.
   (`RepresentationTheory/LieGroups`), and this roadmap does not depend on it.
 - **Poisson manifolds.** General Poisson manifolds, the Lie-Poisson structure on the dual of a Lie
   algebra, and the statement that a moment map is a Poisson map are not in this roadmap.
-- **Lagrangian mechanics and integrable systems.** The Euler-Lagrange equations, the Legendre
-  transform, Liouville-Arnold, action-angle variables and KAM theory are not in this roadmap. A
-  roadmap on them consumes Layers 1 and 2.
+- **Cotangent bundles, Lagrangian mechanics and integrable systems.** The cotangent bundle `T*Q`
+  of a manifold `Q` with its Liouville and canonical forms (only the linear models
+  `V × StrongDual ℝ V` are treated here), the Euler-Lagrange equations, the Legendre transform,
+  Liouville-Arnold, action-angle variables and KAM theory are not in this roadmap. A roadmap on
+  them consumes Layers 1 and 2.
+- **Volume.** The Liouville volume form `ωⁿ` and the Liouville measure of a symplectic manifold
+  are not in this roadmap. Liouville's theorem is stated in Layer 2 on a symplectic vector space.
 - **Infinite dimensions.** The Hamiltonian formalism of Layers 1 and 3 is proved on Banach
   manifolds with weakly nondegenerate forms. Existence and smoothness of flows (Layer 2) use Tau
   Ceti's finite-dimensional flow theory. Partial differential equations and specific field theories
@@ -359,7 +393,10 @@ Apache 2.0 licence:
   for the affine symplectic group;
 - `PhyslibAlpha/ClassicalMechanics/MomentMap/GalileanMass.lean`: the Galilean Lie algebra in
   Souriau's parametrization, his cocycle `f₀` (the opposite of the `f₀` of Milestone 3), and the
-  total mass.
+  total mass;
+- `PhyslibAlpha/ClassicalMechanics/MomentMap/GalileanMassCocycle.lean`: the group level of the
+  previous file, for the Galilean group acting on `N` free particles: Souriau's cocycle `θ₀` of
+  the group, which is not a coboundary and whose derivative at the identity is `f₀`.
 
 These files work in Souriau's sign conventions, not the pinned ones (see the dictionary above).
 They are a source to consult, not a specification.
