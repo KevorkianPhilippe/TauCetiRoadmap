@@ -84,7 +84,8 @@ These are pinned. Every item below uses them.
   - Nondegeneracy and symplectic forms: `SmoothTwoForm.IsNondegenerate`,
     `SmoothTwoForm.isNondegenerate_iff_separatingLeft`, `SmoothTwoForm.IsSymplectic`,
     `SymplecticForm.constSmooth`, `SymplecticForm.isSymplectic_constSmooth`.
-  - The linear symplectic form `TauCeti.SymplecticForm` and `SymplecticForm.IsSymplectomorphism`.
+  - The linear symplectic form `TauCeti.SymplecticForm` and `SymplecticForm.IsSymplectomorphism`
+    (a predicate on a linear equivalence).
   - Cotangent models: `cotangentSymplecticForm` on `V × Module.Dual ℝ V`;
     `strongDualCotangentSymplecticForm` on `V × StrongDual ℝ V`, for any normed `V`;
     `cotangentLiouvilleForm`.
@@ -114,7 +115,8 @@ These are pinned. Every item below uses them.
 - Hamiltonian vector fields, Hamiltonian functions, and the Poisson bracket on a weakly symplectic
   Banach manifold; the Lie algebra of Hamiltonian functions.
 - The invariant formula for a closed two-form on a manifold.
-- Symplectomorphisms between manifolds, conservation laws, and symplecticity of Hamiltonian flows.
+- Symplectic maps and symplectomorphisms between manifolds, conservation laws, and symplecticity
+  of Hamiltonian flows.
 - Infinitesimal actions, moment maps, their cocycle and its class.
 - 2-coboundaries and `H²` of a Lie algebra with trivial coefficients, which Mathlib does not
   have: `twoCoboundary` (the range of `d₁₂`) and `secondCohomology` (the 2-cocycles modulo the
@@ -134,9 +136,17 @@ both consume Layer 1 and may proceed in parallel.
     `0` otherwise.
   - The predicate `IsHamiltonian ω F`: `F` is smooth and admits a smooth Hamiltonian vector field.
   - Uniqueness, from weak nondegeneracy.
-  - Linearity: `X_{aF + bG} = a X_F + b X_G`.
-  - `X_F = 0` exactly when `dF = 0`.
-  - Leibniz: `X_{FG} = F • X_G + G • X_F`.
+  - `mvfderiv I F x` is `0` where `F` is not differentiable, and `hamiltonianVectorField ω F x` is
+    `0` where `dF_x` is not of the form `ω x v`. The next three items therefore carry hypotheses:
+    `F` *has a Hamiltonian vector at* `x` when `ω x v = dF_x` for some `v`.
+  - Linearity. If `X`, `Y` are Hamiltonian vector fields of `F`, `G`, and `F`, `G` are
+    differentiable, then `a • X + b • Y` is a Hamiltonian vector field of `a • F + b • G`. For `ω`
+    nondegenerate, `X_{aF + bG} x = a X_F x + b X_G x` when `F` and `G` are differentiable at `x`
+    and have Hamiltonian vectors at `x`.
+  - For `ω` nondegenerate and `X` a Hamiltonian vector field of `F`, `X x = 0` exactly when
+    `dF_x = 0`.
+  - Leibniz. Under the hypotheses of linearity, `F • Y + G • X` is a Hamiltonian vector field of
+    `F * G`, and `X_{FG} x = F x • X_G x + G x • X_F x`.
   - Locality: `X_F` at `x` depends only on the germ of `F` at `x`.
 - **Strong nondegeneracy.**
   - `ω` is strongly nondegenerate when, at every point, `v ↦ ω x v` is onto
@@ -146,10 +156,16 @@ both consume Layer 1 and may proceed in parallel.
     `hamiltonianVectorField ω F` is smooth. The inverse of `v ↦ ω x v` is a continuous linear
     equivalence by the open mapping theorem, and its smooth dependence on `x` comes from
     `contDiffAt_map_inverse` in charts.
-- **The Poisson bracket** `poissonBracket ω F G`, with the pinned definition.
-  - It is bilinear.
+- **The Poisson bracket** `poissonBracket ω F G`, with the pinned definition. It is `dF (X_G)`,
+  so its two arguments carry different hypotheses.
+  - It is linear in `F`: `{aF + bF', G} x = a {F, G} x + b {F', G} x` when `F` and `F'` are
+    differentiable at `x`, for every `G`.
+  - It is linear in `G`: `{F, aG + bG'} x = a {F, G} x + b {F, G'} x` when `ω` is nondegenerate and
+    `G`, `G'` are differentiable at `x` and have Hamiltonian vectors at `x`, for every `F`.
   - It is antisymmetric on Hamiltonian functions, and equals `ω(X_F, X_G)` there.
-  - It satisfies the Leibniz rule in each argument.
+  - It satisfies the Leibniz rule in each argument:
+    `{FF', G} x = F x * {F', G} x + F' x * {F, G} x` under the hypotheses of linearity in `F`, and
+    `{F, GG'} x = {F, G} x * G' x + G x * {F, G'} x` under those of linearity in `G`.
   - `{F, G}` is smooth when `F` and `G` are Hamiltonian.
 - **The invariant formula for a closed two-form on a manifold.** For a closed smooth two-form `ω`
   and vector fields `U`, `V`, `W` that are smooth near `x`,
@@ -186,16 +202,24 @@ both consume Layer 1 and may proceed in parallel.
   every point, a smooth `F` is constant along every integral curve of `X_H` if and only if
   `{F, H} = 0`. First integrals are closed under the Poisson bracket (Poisson's theorem, from the
   Jacobi identity).
-- **Symplectomorphisms.**
-  - A smooth map `φ : M → M'` is a symplectomorphism from `ω` to `ω'` when
-    `ω' (φ x) (dφ v) (dφ w) = ω x v w` everywhere, with `dφ = mfderiv I I' φ x`.
-  - Identities, compositions, and the inverse of a symplectic `Diffeomorph` are symplectic.
-  - A symplectomorphism transports Hamiltonian vector fields
+- **Symplectic maps and symplectomorphisms.**
+  - A map `φ : M → M'` is a symplectic map from `ω` to `ω'` when
+    `ω' (φ x) (dφ v) (dφ w) = ω x v w` everywhere, with `dφ = mfderiv I I' φ x`. The model spaces
+    of `M` and `M'` may differ: symplectic embeddings are symplectic maps.
+  - A symplectomorphism from `ω` to `ω'` is a `Diffeomorph` (`φ : M ≃ₘ^n⟮I, I'⟯ M'`, with `n ≠ 0`)
+    that is a symplectic map. Like `SymplecticForm.IsSymplectomorphism`, it is a predicate on an
+    equivalence.
+  - Identities and compositions of differentiable symplectic maps are symplectic maps, and the
+    inverse of a symplectomorphism is a symplectomorphism.
+  - The differential of a symplectic map from a nondegenerate `ω` is injective at every point.
+  - A symplectomorphism `φ` to a nondegenerate `ω'` transports Hamiltonian vector fields
     (`dφ (X_{H ∘ φ} x) = X_H (φ x)`), Poisson brackets
     (`{F ∘ φ, G ∘ φ} = {F, G} ∘ φ`), and integral curves (through
-    `IsMIntegralCurveOn.map_of_mfderiv_eq`).
-  - A linear symplectomorphism of symplectic vector spaces (`SymplecticForm.IsSymplectomorphism`)
-    is a symplectomorphism of the constant forms.
+    `IsMIntegralCurveOn.map_of_mfderiv_eq`), for all functions `H`, `F`, `G`. A symplectic map
+    that is not a diffeomorphism need not: `dφ` has to be onto.
+  - A linear symplectomorphism `e` of finite-dimensional symplectic vector spaces
+    (`SymplecticForm.IsSymplectomorphism`) is a symplectomorphism of the constant forms, as the
+    diffeomorphism `e.toContinuousLinearEquiv.toDiffeomorph`.
 - **The variational equation.** Let `X` be a smooth vector field on a finite-dimensional,
   boundaryless, Hausdorff manifold, `x ∈ M`, `v ∈ T_x M`, and `φ_s = fun y ↦ maximalIntegralCurve X y s`.
   For `s₀` with `(x, s₀) ∈ maximalIntegralCurveFlowDomain X`, write `X̃` for the coordinate

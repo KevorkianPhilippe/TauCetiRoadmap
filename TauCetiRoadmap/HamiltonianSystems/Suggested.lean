@@ -111,13 +111,25 @@ theorem hasDerivAt_comp_of_isMIntegralCurveOn {σ : SmoothTwoForm I M} {F H : M 
     HasDerivAt (F ∘ γ) (poissonBracket σ F H (γ t)) t := by
   sorry
 
-/-- A smooth map `φ` is a symplectomorphism from `σ` to `σ'`. -/
-def IsSymplectomorphism
+/-- `φ` is a symplectic map from `σ` to `σ'`: it pulls `σ'` back to `σ`. The model spaces of
+`M` and `M'` may differ, and `φ` need not be invertible: symplectic embeddings are symplectic
+maps. -/
+def IsSymplecticMap
     {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E']
     {H' : Type*} [TopologicalSpace H'] {I' : ModelWithCorners ℝ E' H'}
     {M' : Type*} [TopologicalSpace M'] [ChartedSpace H' M'] [IsManifold I' ∞ M']
     (σ : SmoothTwoForm I M) (σ' : SmoothTwoForm I' M') (φ : M → M') : Prop :=
   ∀ x v w, σ' (φ x) (mfderiv I I' φ x v) (mfderiv I I' φ x w) = σ x v w
+
+/-- A diffeomorphism `φ` is a symplectomorphism from `σ` to `σ'` when it is a symplectic map.
+Like the linear `SymplecticForm.IsSymplectomorphism`, this is a predicate on an equivalence. -/
+def IsSymplectomorphism
+    {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E']
+    {H' : Type*} [TopologicalSpace H'] {I' : ModelWithCorners ℝ E' H'}
+    {M' : Type*} [TopologicalSpace M'] [ChartedSpace H' M'] [IsManifold I' ∞ M']
+    {n : WithTop ℕ∞} (σ : SmoothTwoForm I M) (σ' : SmoothTwoForm I' M')
+    (φ : M ≃ₘ^n⟮I, I'⟯ M') : Prop :=
+  IsSymplecticMap σ σ' φ
 
 /-- Milestone 2: the flow of a Hamiltonian vector field preserves `σ` (finite dimension,
 boundaryless, Hausdorff). -/
