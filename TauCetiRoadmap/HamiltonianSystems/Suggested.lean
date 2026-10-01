@@ -13,9 +13,12 @@ finishes neither a layer nor the roadmap.
 
 The symplectic form is written `σ` here (Souriau's letter) because `ω` is a notation under
 `open scoped ContDiff`; `README.md` writes it `ω`.
--/
 
-namespace TauCetiRoadmap.HamiltonianSystems
+The declarations whose first explicit argument is the form are in the namespace
+`TauCeti.SmoothTwoForm`, next to `SmoothTwoForm.IsSymplectic`, so that they read
+`σ.IsHamiltonian F` and `σ.poissonBracket F G`. `InfinitesimalAction` is in
+`TauCetiRoadmap.HamiltonianSystems`.
+-/
 
 open TauCeti
 open scoped ContDiff Manifold
@@ -26,6 +29,8 @@ variable
   {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
   {H : Type*} [TopologicalSpace H] {I : ModelWithCorners ℝ E H}
   {M : Type*} [TopologicalSpace M] [ChartedSpace H M] [IsManifold I ∞ M]
+
+namespace TauCeti.SmoothTwoForm
 
 /-! ## Layer 1: Hamiltonian vector fields and the Poisson bracket -/
 
@@ -44,7 +49,7 @@ def hamiltonianVectorField (σ : SmoothTwoForm I M) (F : M → ℝ) (x : M) : Ta
 def IsHamiltonian (σ : SmoothTwoForm I M) (F : M → ℝ) : Prop :=
   ContMDiff I 𝓘(ℝ, ℝ) ∞ F ∧ ∃ X : (x : M) → TangentSpace I x,
     ContMDiff I I.tangent ∞ (fun x ↦ (⟨x, X x⟩ : TangentBundle I M)) ∧
-      IsHamiltonianVectorField σ F X
+      σ.IsHamiltonianVectorField F X
 
 /-- Strong nondegeneracy: at every point, `v ↦ σ x v` is onto the continuous dual. -/
 def IsStronglyNondegenerate (σ : SmoothTwoForm I M) : Prop :=
@@ -52,27 +57,33 @@ def IsStronglyNondegenerate (σ : SmoothTwoForm I M) : Prop :=
 
 /-- The Poisson bracket `{F, G} = dF (X_G)`. -/
 def poissonBracket (σ : SmoothTwoForm I M) (F G : M → ℝ) (x : M) : ℝ :=
-  mvfderiv I F x (hamiltonianVectorField σ G x)
+  mvfderiv I F x (σ.hamiltonianVectorField G x)
 
 /-- Layer 1: uniqueness of the Hamiltonian vector field under weak nondegeneracy. -/
 theorem IsHamiltonianVectorField.eq {σ : SmoothTwoForm I M} (hσ : σ.IsNondegenerate)
-    {F : M → ℝ} {X Y : (x : M) → TangentSpace I x} (hX : IsHamiltonianVectorField σ F X)
-    (hY : IsHamiltonianVectorField σ F Y) : X = Y := by
+    {F : M → ℝ} {X Y : (x : M) → TangentSpace I x} (hX : σ.IsHamiltonianVectorField F X)
+    (hY : σ.IsHamiltonianVectorField F Y) : X = Y := by
   sorry
 
 /-- Layer 1: in finite dimension, a nondegenerate form is strongly nondegenerate. -/
 theorem isStronglyNondegenerate_of_finiteDimensional [FiniteDimensional ℝ E]
-    {σ : SmoothTwoForm I M} (hσ : σ.IsNondegenerate) : IsStronglyNondegenerate σ := by
+    {σ : SmoothTwoForm I M} (hσ : σ.IsNondegenerate) : σ.IsStronglyNondegenerate := by
+  sorry
+
+/-- Layer 1: strong nondegeneracy implies nondegeneracy (alternation and Hahn-Banach). -/
+theorem IsStronglyNondegenerate.isNondegenerate {σ : SmoothTwoForm I M}
+    (hσ : σ.IsStronglyNondegenerate) : σ.IsNondegenerate := by
   sorry
 
 /-- Layer 1: for a strongly nondegenerate form, every smooth function is Hamiltonian. -/
-theorem isHamiltonian_of_contMDiff {σ : SmoothTwoForm I M} (hσ : IsStronglyNondegenerate σ)
-    {F : M → ℝ} (hF : ContMDiff I 𝓘(ℝ, ℝ) ∞ F) : IsHamiltonian σ F := by
+theorem isHamiltonian_of_contMDiff {σ : SmoothTwoForm I M} (hσ : σ.IsStronglyNondegenerate)
+    {F : M → ℝ} (hF : ContMDiff I 𝓘(ℝ, ℝ) ∞ F) : σ.IsHamiltonian F := by
   sorry
 
 /-- Layer 1: the invariant formula for a closed two-form, at a point, for vector fields smooth near
 that point. -/
-theorem invariant_formula {σ : SmoothTwoForm I M} (hσ : σ.IsClosed)
+theorem IsClosed.mvfderiv_apply_sub_apply_mlieBracket_eq_zero {σ : SmoothTwoForm I M}
+    (hσ : σ.IsClosed)
     {U V W : (x : M) → TangentSpace I x} {x : M}
     (hU : ContMDiffAt I I.tangent ∞ (fun y ↦ (⟨y, U y⟩ : TangentBundle I M)) x)
     (hV : ContMDiffAt I I.tangent ∞ (fun y ↦ (⟨y, V y⟩ : TangentBundle I M)) x)
@@ -88,17 +99,17 @@ theorem invariant_formula {σ : SmoothTwoForm I M} (hσ : σ.IsClosed)
 /-- Milestone 1: the Poisson bracket of two Hamiltonian functions is Hamiltonian, with Hamiltonian
 vector field `-[X_F, X_G]`. -/
 theorem IsHamiltonian.poissonBracket {σ : SmoothTwoForm I M} (hσ : σ.IsSymplectic)
-    {F G : M → ℝ} (hF : IsHamiltonian σ F) (hG : IsHamiltonian σ G) :
-    IsHamiltonian σ (poissonBracket σ F G) ∧
-      IsHamiltonianVectorField σ (poissonBracket σ F G)
-        (-VectorField.mlieBracket I (hamiltonianVectorField σ F) (hamiltonianVectorField σ G)) := by
+    {F G : M → ℝ} (hF : σ.IsHamiltonian F) (hG : σ.IsHamiltonian G) :
+    σ.IsHamiltonian (σ.poissonBracket F G) ∧
+      σ.IsHamiltonianVectorField (σ.poissonBracket F G)
+        (-VectorField.mlieBracket I (σ.hamiltonianVectorField F) (σ.hamiltonianVectorField G)) := by
   sorry
 
 /-- Milestone 1: the Jacobi identity. -/
 theorem poissonBracket_jacobi {σ : SmoothTwoForm I M} (hσ : σ.IsSymplectic)
-    {F G K : M → ℝ} (hF : IsHamiltonian σ F) (hG : IsHamiltonian σ G) (hK : IsHamiltonian σ K) :
-    poissonBracket σ F (poissonBracket σ G K) + poissonBracket σ G (poissonBracket σ K F)
-      + poissonBracket σ K (poissonBracket σ F G) = 0 := by
+    {F G K : M → ℝ} (hF : σ.IsHamiltonian F) (hG : σ.IsHamiltonian G) (hK : σ.IsHamiltonian K) :
+    σ.poissonBracket F (σ.poissonBracket G K) + σ.poissonBracket G (σ.poissonBracket K F)
+      + σ.poissonBracket K (σ.poissonBracket F G) = 0 := by
   sorry
 
 /-! ## Layer 2: dynamics -/
@@ -106,9 +117,9 @@ theorem poissonBracket_jacobi {σ : SmoothTwoForm I M} (hσ : σ.IsSymplectic)
 /-- Layer 2: along an integral curve of `X_H`, `F` has derivative `{F, H}`. -/
 theorem hasDerivAt_comp_of_isMIntegralCurveOn {σ : SmoothTwoForm I M} {F H : M → ℝ}
     {γ : ℝ → M} {s : Set ℝ} (hs : IsOpen s)
-    (hγ : IsMIntegralCurveOn γ (hamiltonianVectorField σ H) s)
+    (hγ : IsMIntegralCurveOn γ (σ.hamiltonianVectorField H) s)
     (hF : ContMDiff I 𝓘(ℝ, ℝ) 1 F) {t : ℝ} (ht : t ∈ s) :
-    HasDerivAt (F ∘ γ) (poissonBracket σ F H (γ t)) t := by
+    HasDerivAt (F ∘ γ) (σ.poissonBracket F H (γ t)) t := by
   sorry
 
 /-- `φ` is a symplectic map from `σ` to `σ'`: it pulls `σ'` back to `σ`. The model spaces of
@@ -129,24 +140,28 @@ def IsSymplectomorphism
     {M' : Type*} [TopologicalSpace M'] [ChartedSpace H' M'] [IsManifold I' ∞ M']
     {n : WithTop ℕ∞} (σ : SmoothTwoForm I M) (σ' : SmoothTwoForm I' M')
     (φ : M ≃ₘ^n⟮I, I'⟯ M') : Prop :=
-  IsSymplecticMap σ σ' φ
+  σ.IsSymplecticMap σ' φ
 
 /-- Milestone 2: the flow of a Hamiltonian vector field preserves `σ` (finite dimension,
 boundaryless, Hausdorff). -/
-theorem symplectic_maximalIntegralCurve [FiniteDimensional ℝ E] [T2Space M]
+theorem IsSymplectic.apply_mfderiv_maximalIntegralCurve [FiniteDimensional ℝ E] [T2Space M]
     [BoundarylessManifold I M] {σ : SmoothTwoForm I M} (hσ : σ.IsSymplectic) {F : M → ℝ}
     (hF : ContMDiff I 𝓘(ℝ, ℝ) ∞ F) {x : M} {t : ℝ}
-    (hxt : (x, t) ∈ maximalIntegralCurveFlowDomain (hamiltonianVectorField σ F))
+    (hxt : (x, t) ∈ maximalIntegralCurveFlowDomain (σ.hamiltonianVectorField F))
     (v w : TangentSpace I x) :
-    σ (maximalIntegralCurve (hamiltonianVectorField σ F) x t)
-        (mfderiv I I (fun y ↦ maximalIntegralCurve (hamiltonianVectorField σ F) y t) x v)
-        (mfderiv I I (fun y ↦ maximalIntegralCurve (hamiltonianVectorField σ F) y t) x w) =
+    σ (maximalIntegralCurve (σ.hamiltonianVectorField F) x t)
+        (mfderiv I I (fun y ↦ maximalIntegralCurve (σ.hamiltonianVectorField F) y t) x v)
+        (mfderiv I I (fun y ↦ maximalIntegralCurve (σ.hamiltonianVectorField F) y t) x w) =
       σ x v w := by
   sorry
+
+end TauCeti.SmoothTwoForm
 
 /-! ## Layer 3: infinitesimal symmetries and moment maps -/
 
 variable (𝔤 : Type*) [LieRing 𝔤] [LieAlgebra ℝ 𝔤]
+
+namespace TauCetiRoadmap.HamiltonianSystems
 
 variable (I M) in
 /-- An infinitesimal action of `𝔤` on `M` by smooth vector fields, with the convention of the
@@ -158,36 +173,42 @@ structure InfinitesimalAction where
   map_lie : ∀ Z Z', toLinearMap ⁅Z, Z'⁆ =
     -VectorField.mlieBracket I (toLinearMap Z) (toLinearMap Z')
 
+end TauCetiRoadmap.HamiltonianSystems
+
+open TauCetiRoadmap.HamiltonianSystems
+
 variable {𝔤}
+
+namespace TauCeti.SmoothTwoForm
 
 /-- `μ` is a moment map: `ι_{Z_M} σ = d⟨μ, Z⟩`, with each component smooth. -/
 def IsMomentMap (σ : SmoothTwoForm I M) (a : InfinitesimalAction I M 𝔤)
     (μ : M → Module.Dual ℝ 𝔤) : Prop :=
   ∀ Z, ContMDiff I 𝓘(ℝ, ℝ) ∞ (fun x ↦ μ x Z) ∧
-    IsHamiltonianVectorField σ (fun x ↦ μ x Z) (a.toLinearMap Z)
+    σ.IsHamiltonianVectorField (fun x ↦ μ x Z) (a.toLinearMap Z)
 
 /-- The cocycle of a moment map at a point: `{μ_Z, μ_Z'} - μ_{⁅Z, Z'⁆}`. -/
 def momentCocycle (σ : SmoothTwoForm I M) (μ : M → Module.Dual ℝ 𝔤) (x : M) (Z Z' : 𝔤) : ℝ :=
-  poissonBracket σ (fun y ↦ μ y Z) (fun y ↦ μ y Z') x - μ x ⁅Z, Z'⁆
+  σ.poissonBracket (fun y ↦ μ y Z) (fun y ↦ μ y Z') x - μ x ⁅Z, Z'⁆
 
 /-- Layer 3: Noether's theorem. -/
 theorem IsMomentMap.poissonBracket_eq_zero {σ : SmoothTwoForm I M} (hσ : σ.IsSymplectic)
-    {a : InfinitesimalAction I M 𝔤} {μ : M → Module.Dual ℝ 𝔤} (hμ : IsMomentMap σ a μ)
-    {F : M → ℝ} (hF : IsHamiltonian σ F)
+    {a : InfinitesimalAction I M 𝔤} {μ : M → Module.Dual ℝ 𝔤} (hμ : σ.IsMomentMap a μ)
+    {F : M → ℝ} (hF : σ.IsHamiltonian F)
     {Z : 𝔤} (hinv : ∀ x, mvfderiv I F x (a.toLinearMap Z x) = 0) :
-    poissonBracket σ (fun y ↦ μ y Z) F = 0 := by
+    σ.poissonBracket (fun y ↦ μ y Z) F = 0 := by
   sorry
 
 /-- Layer 3: on a preconnected manifold, the cocycle of a moment map is a constant Lie algebra
 2-cocycle with trivial coefficients. -/
 theorem IsMomentMap.exists_twoCocycle [PreconnectedSpace M] {σ : SmoothTwoForm I M}
     (hσ : σ.IsSymplectic) {a : InfinitesimalAction I M 𝔤} {μ : M → Module.Dual ℝ 𝔤}
-    (hμ : IsMomentMap σ a μ) :
+    (hμ : σ.IsMomentMap a μ) :
     ∃ c ∈ LieModule.Cohomology.twoCocycle ℝ 𝔤 (TrivialLieModule ℝ 𝔤 ℝ),
       ∀ x Z Z', ((c : LieModule.Cohomology.twoCochain ℝ 𝔤 (TrivialLieModule ℝ 𝔤 ℝ)) Z Z' :
-        TrivialLieModule ℝ 𝔤 ℝ) = (TrivialLieModule.equiv ℝ 𝔤 ℝ).symm (momentCocycle σ μ x Z Z') := by
+        TrivialLieModule ℝ 𝔤 ℝ) = (TrivialLieModule.equiv ℝ 𝔤 ℝ).symm (σ.momentCocycle μ x Z Z') := by
   sorry
 
-end
+end TauCeti.SmoothTwoForm
 
-end TauCetiRoadmap.HamiltonianSystems
+end
