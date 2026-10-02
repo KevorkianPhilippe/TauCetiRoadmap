@@ -115,17 +115,19 @@ theorem poissonBracket_jacobi {σ : SmoothTwoForm I M} (hσ : σ.IsSymplectic)
 
 /-! ## Layer 2: dynamics -/
 
-/-- Layer 2: along an integral curve of `X_H`, `F` has derivative `{F, H}`. -/
+/-- Layer 2: along an integral curve `γ` of `X_H` on an open set `s` of times, `F ∘ γ` has
+derivative `{F, H} (γ t)` at every `t ∈ s` such that `F` is differentiable at `γ t`. -/
 theorem hasDerivAt_comp_of_isMIntegralCurveOn {σ : SmoothTwoForm I M} {F H : M → ℝ}
     {γ : ℝ → M} {s : Set ℝ} (hs : IsOpen s)
     (hγ : IsMIntegralCurveOn γ (σ.hamiltonianVectorField H) s)
-    (hF : ContMDiff I 𝓘(ℝ, ℝ) 1 F) {t : ℝ} (ht : t ∈ s) :
+    {t : ℝ} (ht : t ∈ s) (hF : MDifferentiableAt I 𝓘(ℝ, ℝ) F (γ t)) :
     HasDerivAt (F ∘ γ) (σ.poissonBracket F H (γ t)) t := by
   sorry
 
 /-- Layer 2: conservation of energy. Along an integral curve of `X_H` on an open set `s` of times,
 a differentiable `H` takes the same value at any two times of a preconnected `T ⊆ s` (an
-interval). Its values on two connected components of `s` need not agree. -/
+interval): the derivative statement for `F = H`, with `{H, H} = 0`. Its values on two connected
+components of `s` need not agree. -/
 theorem apply_eq_of_isMIntegralCurveOn {σ : SmoothTwoForm I M} {H : M → ℝ}
     {γ : ℝ → M} {s T : Set ℝ} (hs : IsOpen s)
     (hγ : IsMIntegralCurveOn γ (σ.hamiltonianVectorField H) s)
@@ -277,10 +279,10 @@ theorem IsMomentMap.momentCocycle_add_const {σ : SmoothTwoForm I M}
     σ.momentCocycle (fun y ↦ μ y + ν) x Z Z' = σ.momentCocycle μ x Z Z' - ν ⁅Z, Z'⁆ := by
   sorry
 
-/-- Layer 3: at every point, the cocycle of a moment map is a Lie algebra 2-cocycle with trivial
-coefficients. No connectedness or nonemptiness of `M` is involved. -/
+/-- Layer 3: at every point, the cocycle of a moment map for a closed form is a Lie algebra
+2-cocycle with trivial coefficients. No connectedness or nonemptiness of `M` is involved. -/
 theorem IsMomentMap.exists_twoCocycle_apply_eq_momentCocycle {σ : SmoothTwoForm I M}
-    (hσ : σ.IsSymplectic) {a : InfinitesimalAction I M 𝔤} {μ : M → Module.Dual ℝ 𝔤}
+    (hσ : σ.IsClosed) {a : InfinitesimalAction I M 𝔤} {μ : M → Module.Dual ℝ 𝔤}
     (hμ : σ.IsMomentMap a μ) (x : M) :
     ∃ c ∈ LieModule.Cohomology.twoCocycle ℝ 𝔤 (TrivialLieModule ℝ 𝔤 ℝ),
       ∀ Z Z', ((c : LieModule.Cohomology.twoCochain ℝ 𝔤 (TrivialLieModule ℝ 𝔤 ℝ)) Z Z' :
@@ -289,19 +291,20 @@ theorem IsMomentMap.exists_twoCocycle_apply_eq_momentCocycle {σ : SmoothTwoForm
   sorry
 
 /-- Layer 3: independence of the point. On a preconnected manifold, the cocycle of a moment map
-takes the same value at any two points. -/
+for a closed form takes the same value at any two points. -/
 theorem IsMomentMap.momentCocycle_eq_of_preconnectedSpace [PreconnectedSpace M]
-    {σ : SmoothTwoForm I M} (hσ : σ.IsSymplectic) {a : InfinitesimalAction I M 𝔤}
+    {σ : SmoothTwoForm I M} (hσ : σ.IsClosed) {a : InfinitesimalAction I M 𝔤}
     {μ : M → Module.Dual ℝ 𝔤} (hμ : σ.IsMomentMap a μ) (x y : M) (Z Z' : 𝔤) :
     σ.momentCocycle μ x Z Z' = σ.momentCocycle μ y Z Z' := by
   sorry
 
-/-- Layer 3: the evaluation equation. On a connected manifold (preconnected and nonempty), exactly
-one Lie algebra 2-cocycle with trivial coefficients takes the value `σ.momentCocycle μ x Z Z'` on
-`(Z, Z')` for every point `x`: the cocycle of the moment map. On the empty manifold the condition
-is vacuous and holds for every 2-cocycle, hence `[ConnectedSpace M]`. -/
+/-- Layer 3: the evaluation equation. On a connected manifold (preconnected and nonempty), for a
+closed form, exactly one Lie algebra 2-cocycle with trivial coefficients takes the value
+`σ.momentCocycle μ x Z Z'` on `(Z, Z')` for every point `x`: the cocycle of the moment map. On
+the empty manifold the condition is vacuous and holds for every 2-cocycle, hence
+`[ConnectedSpace M]`. -/
 theorem IsMomentMap.existsUnique_twoCocycle [ConnectedSpace M] {σ : SmoothTwoForm I M}
-    (hσ : σ.IsSymplectic) {a : InfinitesimalAction I M 𝔤} {μ : M → Module.Dual ℝ 𝔤}
+    (hσ : σ.IsClosed) {a : InfinitesimalAction I M 𝔤} {μ : M → Module.Dual ℝ 𝔤}
     (hμ : σ.IsMomentMap a μ) :
     ∃! c : LieModule.Cohomology.twoCocycle ℝ 𝔤 (TrivialLieModule ℝ 𝔤 ℝ),
       ∀ x Z Z', ((c : LieModule.Cohomology.twoCochain ℝ 𝔤 (TrivialLieModule ℝ 𝔤 ℝ)) Z Z' :

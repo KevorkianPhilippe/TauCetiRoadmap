@@ -213,8 +213,8 @@ both consume Layer 1 and may proceed in parallel.
 
 - **Conservation along integral curves.** Let `γ` be an integral curve of `X_H` on an open set `s`
   of times (`IsMIntegralCurveOn γ X_H s`).
-  - The derivative. For `F` differentiable, `F ∘ γ` has derivative `{F, H} (γ t)` at every
-    `t ∈ s`.
+  - The derivative. For `t ∈ s` and `F` differentiable at `γ t`, `F ∘ γ` has derivative
+    `{F, H} (γ t)` at `t`.
   - Constancy is stated on a preconnected set of times `T ⊆ s`, that is, on an interval. If `F`
     is differentiable and `{F, H} (γ t) = 0` for every `t ∈ T`, then `F (γ t₁) = F (γ t₂)` for
     all `t₁`, `t₂` in `T`. This covers `T = s` when `s` is an interval, and each connected
@@ -226,7 +226,7 @@ both consume Layer 1 and may proceed in parallel.
     a vector `v` with `ω x v = dH_x`, and then `dH_x v = ω x v v = 0`, or `0`. So a
     differentiable `H` takes the same value at any two times of a preconnected `T ⊆ s`.
     Differentiability of `H` is the only hypothesis: it is the hypothesis on `F` of the
-    derivative statement, used with `F = H`.
+    derivative statement, used with `F = H` at every time of `T`.
   - On a boundaryless manifold, for `ω` nondegenerate, `H` Hamiltonian (so that `X_H` is smooth
     and local integral curves exist through every point) and `F` differentiable, `{F, H} = 0` if
     and only if `F ∘ γ` is constant for every integral curve `γ` of `X_H` on an open interval.
