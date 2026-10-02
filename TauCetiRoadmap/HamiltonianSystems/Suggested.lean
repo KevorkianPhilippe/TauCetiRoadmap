@@ -41,8 +41,8 @@ def IsHamiltonianVectorField (σ : SmoothTwoForm I M) (F : M → ℝ)
   ∀ x v, σ x (X x) v = mvfderiv I F x v
 
 open Classical in
-/-- The Hamiltonian vector field of `F` at `x`: the unique `v` with `σ x v = dF_x` when it exists,
-`0` otherwise. -/
+/-- The Hamiltonian vector field of `F` at `x`: a vector `v` with `σ x v = dF_x` when one exists
+(it is unique when `σ` is nondegenerate), `0` otherwise. -/
 def hamiltonianVectorField (σ : SmoothTwoForm I M) (F : M → ℝ) (x : M) : TangentSpace I x :=
   if h : ∃ v : TangentSpace I x, ∀ w, σ x v w = mvfderiv I F x w then h.choose else 0
 
@@ -173,7 +173,8 @@ end TauCeti.SmoothTwoForm
 namespace TauCetiRoadmap.HamiltonianSystems
 
 /-- The canonical symplectic form on `(Fin n → ℝ) × (Fin n → ℝ)`, with points `(q, p)`: the
-transport of `cotangentSymplecticForm` along `(q, p) ↦ (q, p ⬝ᵥ ·)`. -/
+pullback of `cotangentSymplecticForm` by `(q, p) ↦ (q, p ⬝ᵥ ·)`, written as its
+`SymplecticForm.transport` along the inverse of that equivalence. -/
 def coordinateSymplecticForm (n : ℕ) : SymplecticForm ((Fin n → ℝ) × (Fin n → ℝ)) :=
   (cotangentSymplecticForm (V := Fin n → ℝ)).transport
     ((LinearEquiv.refl ℝ (Fin n → ℝ)).prodCongr (dotProductEquiv ℝ (Fin n))).symm

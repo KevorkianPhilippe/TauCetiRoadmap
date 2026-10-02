@@ -139,8 +139,8 @@ both consume Layer 1 and may proceed in parallel.
 
 - **Hamiltonian vector fields.**
   - The predicate `IsHamiltonianVectorField ω F X`.
-  - The pointwise `hamiltonianVectorField ω F x`: the unique `v` with `ω x v = dF_x` when it exists,
-    `0` otherwise.
+  - The pointwise `hamiltonianVectorField ω F x`: a vector `v` with `ω x v = dF_x` when one
+    exists (it is unique when `ω` is nondegenerate), `0` otherwise.
   - The predicate `IsHamiltonian ω F`: `F` is smooth and admits a smooth Hamiltonian vector field.
   - Uniqueness, from weak nondegeneracy.
   - `mvfderiv I F x` is `0` where `F` is not differentiable, and `hamiltonianVectorField ω F x` is
@@ -268,13 +268,13 @@ both consume Layer 1 and may proceed in parallel.
   basis. It uses the Hamiltonian vector field and the Poisson bracket of Layer 1, and defines no
   others.
   - The coordinate model. On `(Fin n → ℝ) × (Fin n → ℝ)`, with points `(q, p)`, the form is
-    `ω((q, p), (q', p')) = p' ⬝ᵥ q - p ⬝ᵥ q'`, that is `Σ_i dq_i ∧ dp_i`. It is the transport
-    (`SymplecticForm.transport`) of `cotangentSymplecticForm` on
-    `(Fin n → ℝ) × Module.Dual ℝ (Fin n → ℝ)` along `(q, p) ↦ (q, p ⬝ᵥ ·)`, that is Mathlib's
-    `dotProductEquiv ℝ (Fin n)` on the second factor, made a smooth form by
-    `SymplecticForm.constSmooth`. The same map, with `p ⬝ᵥ ·` read as a continuous linear form,
-    is a linear symplectomorphism onto the canonical model `V × StrongDual ℝ V` for
-    `V = Fin n → ℝ`. The form of Milestone 3 is the case `n = 3`.
+    `ω((q, p), (q', p')) = p' ⬝ᵥ q - p ⬝ᵥ q'`, that is `Σ_i dq_i ∧ dp_i`. It is the pullback of
+    `cotangentSymplecticForm` on `(Fin n → ℝ) × Module.Dual ℝ (Fin n → ℝ)` by
+    `(q, p) ↦ (q, p ⬝ᵥ ·)`, that is Mathlib's `dotProductEquiv ℝ (Fin n)` on the second factor:
+    its `SymplecticForm.transport` along the inverse of that equivalence. It is made a smooth
+    form by `SymplecticForm.constSmooth`. The same map, with `p ⬝ᵥ ·` read as a continuous
+    linear form, is a linear symplectomorphism onto the canonical model `V × StrongDual ℝ V`
+    for `V = Fin n → ℝ`. The form of Milestone 3 is the case `n = 3`.
   - Hamilton's equations. Write `∂H/∂q_i = fderiv ℝ H x (Pi.single i 1, 0)` and
     `∂H/∂p_i = fderiv ℝ H x (0, Pi.single i 1)`. For `H` differentiable at `x`,
     `X_H x = (∂H/∂p, -∂H/∂q)`. For `H` differentiable, a curve `t ↦ (q t, p t)` is an integral
@@ -396,10 +396,10 @@ both consume Layer 1 and may proceed in parallel.
     the Standing conventions, through the identification of `Fin 3 → ℝ` with its dual by `⬝ᵥ`.
     - Positions and momenta are in `Fin 3 → ℝ`, where `⨯₃` and `⬝ᵥ` are defined; it carries no
       inner product.
-    - The form is the transport (`SymplecticForm.transport`) of `cotangentSymplecticForm` on
-      `(Fin 3 → ℝ) × Module.Dual ℝ (Fin 3 → ℝ)` along `(q, p) ↦ (q, p ⬝ᵥ ·)`, that is Mathlib's
-      `dotProductEquiv ℝ (Fin 3)` on the second factor, made a smooth form by
-      `SymplecticForm.constSmooth`.
+    - The form is the pullback of `cotangentSymplecticForm` on
+      `(Fin 3 → ℝ) × Module.Dual ℝ (Fin 3 → ℝ)` by `(q, p) ↦ (q, p ⬝ᵥ ·)`, that is Mathlib's
+      `dotProductEquiv ℝ (Fin 3)` on the second factor: its `SymplecticForm.transport` along the
+      inverse of that equivalence. It is made a smooth form by `SymplecticForm.constSmooth`.
     - Through `EuclideanSpace.equiv (Fin 3) ℝ` on each factor, it is Tau Ceti's `stdSymplecticForm`
       on `EuclideanSpace ℝ (Fin 3) × EuclideanSpace ℝ (Fin 3)`; this comparison is a target.
   - **The action** of `Z = (ρ, β, γ, ε)` is the transport of its action on space-time to straight
@@ -463,35 +463,55 @@ One owner per shared construction. Each entry states this roadmap's side of the 
     its laws are the degree-two cases of the generic ones, and `pullback_isClosed` is
     `mpullback_mextDeriv` applied to a closed form.
   - The invariant formula. The six-term formula (Layer 1) is the invariant formula of 1.4 in
-    degree two, applied to a closed form.
+    degree two, applied to a closed form. This roadmap uses it at a point, for vector fields
+    smooth near that point. If the generic formula is stated for vector fields defined on all
+    of `M`, the six-term statement is kept, and is derived from the generic formula on an open
+    neighbourhood of the point.
+  - Flows. Milestone 2 (Layer 2) says that the flow of `X_H` preserves `ω`. #178 also lists
+    Cartan's formula (1.4) and Lie derivatives of forms via flows (3.4). With them, Milestone 2
+    follows from the vanishing of the Lie derivative of `ω` along `X_H`, which is
+    `d(ι_{X_H} ω) + ι_{X_H} dω = d(dH) + 0`. The variational equation (Layer 2) is a statement
+    about the flow of a vector field, with no form in it.
   - One implementation. Against `SmoothTwoForm` as a carrier of its own, with closedness read in
-    charts, these two items are proved in charts, with the statements written in Layers 1 and 2.
-    On the generic carrier they are specializations of the generic statements, and the chart
-    proofs are deleted. No wedge product, exterior derivative, Lie derivative, or pullback in
-    another degree is built here.
+    charts, the pullback, the six-term formula and Milestone 2 are proved in charts, Milestone 2
+    through the variational equation, with the statements written in Layers 1 and 2. On the
+    generic carrier they are derived from the generic statements, and the chart proofs are
+    deleted. No wedge product, exterior derivative, Lie derivative, or pullback in another
+    degree is built here.
   - The carrier. The declarations of Layers 1 to 3 take `ω : SmoothTwoForm I M`, and their
     statements use it through its evaluation `ω x v w`, the smoothness of `ω(U, V)`, the
-    predicates `IsClosed`, `IsNondegenerate` and `IsSymplectic`, the constant forms, and the two
-    items above. This is the interface that Layer 0.4 of #178 carries over to the generic
-    carrier, so these declarations follow the carrier: on `SmoothForm I M ℝ 2` they are stated
-    through the retained name `SmoothTwoForm`, with evaluation spelled as that layer fixes it
-    for degree-two forms, and are otherwise unchanged. There is no second carrier of two-forms.
+    predicates `IsClosed`, `IsNondegenerate` and `IsSymplectic`, the constant forms, and the
+    pullback. Layer 0.4 of #178 asks that the evaluation, the smooth evaluation and the
+    constant forms follow from the generic API, and that closedness, nondegeneracy and the
+    symplectic predicate be preserved; the pullback is the `mpullback` of its Layer 0.3. So
+    these statements follow the carrier. On `SmoothForm I M ℝ 2` they are written with
+    evaluation spelled as Layer 0.4 fixes it for degree-two forms, under the name
+    `SmoothTwoForm` if that layer retains it as an abbreviation and in the namespace of the
+    generic carrier otherwise, and are otherwise unchanged. Carrying them over is this
+    roadmap's work: its declarations implemented before that move are ported to the generic
+    carrier when it happens, and those implemented after are written on it. There is no second
+    carrier of two-forms.
 - **Planar restricted three-body problem (#151).** This roadmap owns the Hamiltonian vector
   field and the Poisson bracket (`hamiltonianVectorField`, `poissonBracket`) with their laws
   (Layer 1 and Milestone 1), conservation along integral curves and first integrals (Layer 2),
   symplectomorphisms and canonical transformations between open subsets (Layer 2), and the
   canonical model in coordinates (Layer 2), whose conventions (`ω = Σ_i dq_i ∧ dp_i`,
   `q̇ = ∂H/∂p`, `ṗ = -∂H/∂q`) are those of #151.
-  - The flat Hamiltonian mechanics on `Fin (2 * n) → ℝ` that its Lane A1 asks for is provided by
-    the item *Canonical coordinates* of Layer 2: a reindexing of the canonical model, with the
-    Hamiltonian vector field and the Poisson bracket of Layer 1, proved coordinate equations,
-    and transport to open subsets.
+  - Lane A1 of #151 lists flat Hamiltonian mechanics on `Fin (2 * n) → ℝ`: the standard form,
+    the Hamiltonian vector field, the coordinate Poisson bracket, a first-integral predicate on
+    an open set, Hamilton's equations, the laws of the bracket, and canonical changes of
+    variables on open sets. On this roadmap's side, these are the item *Canonical coordinates*
+    of Layer 2: a reindexing of the canonical model, with the Hamiltonian vector field and the
+    Poisson bracket of Layer 1, proved coordinate equations, and transport to open subsets. A
+    first integral of `H` on an open set is a function `F` with `{F, H} = 0` there, for the
+    bracket of the restricted form; this roadmap states first integrals through that equation
+    and names no separate predicate.
   - Not in this roadmap: statements at finite regularity `C^k` beyond the pointwise ones of
     Layer 1, real-analytic Hamiltonians and first integrals on a domain, and functional
-    independence of first integrals with its transport under canonical transformations. A
-    roadmap that needs them, such as #151, extends this API: they are stated with the
-    Hamiltonian vector field and the Poisson bracket of Layer 1, and need no second Hamiltonian
-    vector field and no second Poisson bracket.
+    independence of first integrals with its transport under canonical transformations. They
+    can be stated with the Hamiltonian vector field and the Poisson bracket of Layer 1, as
+    extensions of this API; this roadmap provides no second Hamiltonian vector field and no
+    second Poisson bracket for them.
 
 ## References
 
