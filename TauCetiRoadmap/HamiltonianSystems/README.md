@@ -76,7 +76,8 @@ These are pinned. Every item below uses them.
 
 ## What Mathlib and Tau Ceti already have (consume)
 
-- **Tau Ceti, symplectic layer.**
+- **Tau Ceti, symplectic layer.** The two-form carrier is used through the API listed here;
+  *Relation to sibling roadmaps* says how that use follows the carrier.
   - Smooth two-forms and their API: `TauCeti.SmoothTwoForm`, evaluation `form x v w`,
     `SmoothTwoForm.bilinFormAt`, `SmoothTwoForm.contMDiff_apply` (smoothness of `ω(U, V)`), and
     `SmoothTwoForm.const` for a continuous alternating bilinear form on a model space.
@@ -117,9 +118,12 @@ These are pinned. Every item below uses them.
 
 - Hamiltonian vector fields, Hamiltonian functions, and the Poisson bracket on a weakly symplectic
   Banach manifold; the Lie algebra of Hamiltonian functions.
-- The invariant formula for a closed two-form on a manifold.
-- The pullback of a two-form, symplectic maps and symplectomorphisms between manifolds,
-  conservation laws, and symplecticity of Hamiltonian flows.
+- Two degree-two cases of the calculus of differential forms, which the differential geometry
+  roadmap owns (see *Relation to sibling roadmaps*): the invariant formula for a closed two-form
+  on a manifold, and the pullback of a two-form.
+- Symplectic maps and symplectomorphisms between manifolds, conservation laws, and symplecticity
+  of Hamiltonian flows.
+- The canonical model in coordinates, on `(Fin n → ℝ) × (Fin n → ℝ)` and on `Fin (2 * n) → ℝ`.
 - Infinitesimal actions, moment maps, their cocycle and its class.
 - 2-coboundaries and `H²` of a Lie algebra with trivial coefficients, which Mathlib does not
   have: `twoCoboundary` (the range of `d₁₂`) and `secondCohomology` (the 2-cocycles modulo the
@@ -177,8 +181,13 @@ both consume Layer 1 and may proceed in parallel.
   and vector fields `U`, `V`, `W` that are smooth near `x`,
   `U(ω(V, W)) - V(ω(U, W)) + W(ω(U, V)) - ω([U, V], W) + ω([U, W], V) - ω([V, W], U) = 0` at `x`.
   - The directional derivatives are `mvfderiv` of the evaluated functions.
-  - It is obtained from Mathlib's `extDeriv_apply_vectorField` in the chart at `x`, through
-    `SmoothTwoForm.inChartAt` and the chart description of `mlieBracket`.
+  - The left-hand side is `dω(U, V, W)` at `x`, in the normalization of Mathlib's `extDeriv`.
+    This item is the degree-two case, for a closed form, of the invariant formula for the
+    exterior derivative through `mlieBracket`, which the differential geometry roadmap owns (see
+    *Relation to sibling roadmaps*). It is the only invariant formula stated in this roadmap.
+  - Against the carrier `SmoothTwoForm`, whose closedness is read in charts, it is obtained from
+    Mathlib's `extDeriv_apply_vectorField` in the chart at `x`, through `SmoothTwoForm.inChartAt`
+    and the chart description of `mlieBracket`.
   - The statement is local, so it needs no global extension of tangent vectors to vector fields
     (smooth bump functions need not exist on a Banach manifold).
 - **Milestone 1: Hamiltonian functions form a Lie algebra.** For `ω` symplectic and `F`, `G`
@@ -228,7 +237,11 @@ both consume Layer 1 and may proceed in parallel.
   - The pullback `SmoothTwoForm.pullback` of a smooth two-form `ω'` on `M'` along a smooth map
     `φ : M → M'`: `(φ^* ω') x v w = ω' (φ x) (dφ v) (dφ w)`, with `dφ = mfderiv I I' φ x`. It is
     compatible with the identity, composition, `add` and `smul`, and the pullback of a closed
-    form is closed (`pullback_isClosed`).
+    form is closed (`pullback_isClosed`). It is the pullback of differential forms in degree
+    two, which the differential geometry roadmap owns, and not a second pullback: its defining
+    equation and its laws are the degree-two cases of the generic ones, and `pullback_isClosed`
+    is the degree-two case of the naturality of the exterior derivative (see *Relation to
+    sibling roadmaps*).
   - A map `φ : M → M'` is a symplectic map from `ω` to `ω'` when
     `ω' (φ x) (dφ v) (dφ w) = ω x v w` everywhere; for `φ` smooth, exactly when `φ^* ω' = ω`. The
     model spaces of `M` and `M'` may differ: symplectic embeddings are symplectic maps.
@@ -251,6 +264,39 @@ both consume Layer 1 and may proceed in parallel.
     `Subtype.val` transports Hamiltonian vector fields and Poisson brackets as a symplectomorphism
     does. A canonical transformation between open subsets `U` of `M` and `U'` of `M'` is a
     symplectomorphism between `U` and `U'` for the restricted forms.
+- **Canonical coordinates.** The flat theory in coordinates is the canonical model read in a
+  basis. It uses the Hamiltonian vector field and the Poisson bracket of Layer 1, and defines no
+  others.
+  - The coordinate model. On `(Fin n → ℝ) × (Fin n → ℝ)`, with points `(q, p)`, the form is
+    `ω((q, p), (q', p')) = p' ⬝ᵥ q - p ⬝ᵥ q'`, that is `Σ_i dq_i ∧ dp_i`. It is the transport
+    (`SymplecticForm.transport`) of `cotangentSymplecticForm` on
+    `(Fin n → ℝ) × Module.Dual ℝ (Fin n → ℝ)` along `(q, p) ↦ (q, p ⬝ᵥ ·)`, that is Mathlib's
+    `dotProductEquiv ℝ (Fin n)` on the second factor, made a smooth form by
+    `SymplecticForm.constSmooth`. The same map, with `p ⬝ᵥ ·` read as a continuous linear form,
+    is a linear symplectomorphism onto the canonical model `V × StrongDual ℝ V` for
+    `V = Fin n → ℝ`. The form of Milestone 3 is the case `n = 3`.
+  - Hamilton's equations. Write `∂H/∂q_i = fderiv ℝ H x (Pi.single i 1, 0)` and
+    `∂H/∂p_i = fderiv ℝ H x (0, Pi.single i 1)`. For `H` differentiable at `x`,
+    `X_H x = (∂H/∂p, -∂H/∂q)`. For `H` differentiable, a curve `t ↦ (q t, p t)` is an integral
+    curve of `X_H` on an open set `s` of times exactly when `q_i' = ∂H/∂p_i` and
+    `p_i' = -∂H/∂q_i` along the curve, at every time of `s`.
+  - The bracket in coordinates. For `F` and `G` differentiable at `x`,
+    `{F, G} x = Σ_i (∂F/∂q_i ∂G/∂p_i - ∂F/∂p_i ∂G/∂q_i)`.
+  - Reindexing. `Fin (2 * n) → ℝ` carries the transport of this form along the linear
+    equivalence `(Fin n → ℝ) × (Fin n → ℝ) ≃ₗ[ℝ] (Fin (2 * n) → ℝ)` sending `(q, p)` to the
+    vector `x` with `x_i = q_i` and `x_{n+i} = p_i` for `i < n`, that is
+    `ω(x, y) = Σ_{i<n} (x_i y_{n+i} - x_{n+i} y_i)`. That equivalence is a linear
+    symplectomorphism by construction, hence a symplectomorphism of the constant forms by the
+    item above. So the Hamiltonian vector fields, Poisson brackets and integral curves of
+    `Fin (2 * n) → ℝ` are the transported ones, and Hamilton's equations and the bracket formula
+    hold there with `∂/∂x_i` and `∂/∂x_{n+i}` in place of `∂/∂q_i` and `∂/∂p_i`.
+  - Open sets. By the item on open subsets, for an open subset `U` of either model with the
+    restricted form, and `x ∈ U`, the Hamiltonian vector field of `H ∘ Subtype.val` at `x` is
+    sent to `X_H x` by the differential of `Subtype.val`, and
+    `{F ∘ Subtype.val, G ∘ Subtype.val} x = {F, G} x`: the same formulas hold on `U`. A canonical
+    change of variables between open subsets `U`, `U'` is a symplectomorphism `φ` between them.
+    It transports Hamiltonians (`H ↦ H ∘ φ`), Hamiltonian vector fields, Poisson brackets,
+    integral curves, and first integrals (the functions `F` with `{F, H} = 0`).
 - **The variational equation.** Let `X` be a smooth vector field on a finite-dimensional,
   boundaryless, Hausdorff manifold, `x ∈ M`, `v ∈ T_x M`, and `φ_s = fun y ↦ maximalIntegralCurve X y s`.
   For `s₀` with `(x, s₀) ∈ maximalIntegralCurveFlowDomain X`, write `X̃` for the coordinate
@@ -401,6 +447,51 @@ both consume Layer 1 and may proceed in parallel.
   manifolds with weakly nondegenerate forms. Existence and smoothness of flows (Layer 2) use Tau
   Ceti's finite-dimensional flow theory. Partial differential equations and specific field theories
   are not in this roadmap.
+
+## Relation to sibling roadmaps
+
+One owner per shared construction. Each entry states this roadmap's side of the boundary.
+
+- **Differential geometry (#178)** owns the calculus of differential forms on manifolds: the
+  generic carrier `SmoothForm I M F k` and the move of Tau Ceti's `SmoothTwoForm` onto
+  `SmoothForm I M ℝ 2` (its Layer 0.4), the pullback `mpullback` (0.3), the exterior derivative
+  `mextDeriv` (1.1), its naturality `mpullback_mextDeriv` (1.2), and the invariant formulas
+  through `mlieBracket` (1.4). This roadmap owns no calculus of forms. It consumes that one in
+  degree two.
+  - The pullback. `SmoothTwoForm.pullback` (Layer 2) is `mpullback` in degree two. On the
+    generic carrier it is that pullback, or an adapter of it with the same defining equation;
+    its laws are the degree-two cases of the generic ones, and `pullback_isClosed` is
+    `mpullback_mextDeriv` applied to a closed form.
+  - The invariant formula. The six-term formula (Layer 1) is the invariant formula of 1.4 in
+    degree two, applied to a closed form.
+  - One implementation. Against `SmoothTwoForm` as a carrier of its own, with closedness read in
+    charts, these two items are proved in charts, with the statements written in Layers 1 and 2.
+    On the generic carrier they are specializations of the generic statements, and the chart
+    proofs are deleted. No wedge product, exterior derivative, Lie derivative, or pullback in
+    another degree is built here.
+  - The carrier. The declarations of Layers 1 to 3 take `ω : SmoothTwoForm I M`, and their
+    statements use it through its evaluation `ω x v w`, the smoothness of `ω(U, V)`, the
+    predicates `IsClosed`, `IsNondegenerate` and `IsSymplectic`, the constant forms, and the two
+    items above. This is the interface that Layer 0.4 of #178 carries over to the generic
+    carrier, so these declarations follow the carrier: on `SmoothForm I M ℝ 2` they are stated
+    through the retained name `SmoothTwoForm`, with evaluation spelled as that layer fixes it
+    for degree-two forms, and are otherwise unchanged. There is no second carrier of two-forms.
+- **Planar restricted three-body problem (#151).** This roadmap owns the Hamiltonian vector
+  field and the Poisson bracket (`hamiltonianVectorField`, `poissonBracket`) with their laws
+  (Layer 1 and Milestone 1), conservation along integral curves and first integrals (Layer 2),
+  symplectomorphisms and canonical transformations between open subsets (Layer 2), and the
+  canonical model in coordinates (Layer 2), whose conventions (`ω = Σ_i dq_i ∧ dp_i`,
+  `q̇ = ∂H/∂p`, `ṗ = -∂H/∂q`) are those of #151.
+  - The flat Hamiltonian mechanics on `Fin (2 * n) → ℝ` that its Lane A1 asks for is provided by
+    the item *Canonical coordinates* of Layer 2: a reindexing of the canonical model, with the
+    Hamiltonian vector field and the Poisson bracket of Layer 1, proved coordinate equations,
+    and transport to open subsets.
+  - Not in this roadmap: statements at finite regularity `C^k` beyond the pointwise ones of
+    Layer 1, real-analytic Hamiltonians and first integrals on a domain, and functional
+    independence of first integrals with its transport under canonical transformations. A
+    roadmap that needs them, such as #151, extends this API: they are stated with the
+    Hamiltonian vector field and the Poisson bracket of Layer 1, and need no second Hamiltonian
+    vector field and no second Poisson bracket.
 
 ## References
 

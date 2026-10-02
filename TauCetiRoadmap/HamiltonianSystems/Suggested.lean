@@ -1,6 +1,7 @@
 import Mathlib
 import TauCeti.Geometry.Symplectic.Manifold.TwoForm
 import TauCeti.Geometry.Symplectic.Cotangent.Basic
+import TauCeti.Geometry.Symplectic.SymplecticTransport
 import TauCeti.Geometry.Manifold.IntegralCurve.Flow
 
 /-!
@@ -16,8 +17,8 @@ The symplectic form is written `σ` here (Souriau's letter) because `ω` is a no
 
 The declarations whose first explicit argument is the form are in the namespace
 `TauCeti.SmoothTwoForm`, next to `SmoothTwoForm.IsSymplectic`, so that they read
-`σ.IsHamiltonian F` and `σ.poissonBracket F G`. `InfinitesimalAction` is in
-`TauCetiRoadmap.HamiltonianSystems`.
+`σ.IsHamiltonian F` and `σ.poissonBracket F G`. `InfinitesimalAction` and
+`coordinateSymplecticForm` are in `TauCetiRoadmap.HamiltonianSystems`.
 -/
 
 open TauCeti
@@ -166,6 +167,45 @@ theorem IsSymplectic.apply_mfderiv_maximalIntegralCurve [FiniteDimensional ℝ E
   sorry
 
 end TauCeti.SmoothTwoForm
+
+/-! ## Layer 2: canonical coordinates -/
+
+namespace TauCetiRoadmap.HamiltonianSystems
+
+/-- The canonical symplectic form on `(Fin n → ℝ) × (Fin n → ℝ)`, with points `(q, p)`: the
+transport of `cotangentSymplecticForm` along `(q, p) ↦ (q, p ⬝ᵥ ·)`. -/
+def coordinateSymplecticForm (n : ℕ) : SymplecticForm ((Fin n → ℝ) × (Fin n → ℝ)) :=
+  (cotangentSymplecticForm (V := Fin n → ℝ)).transport
+    ((LinearEquiv.refl ℝ (Fin n → ℝ)).prodCongr (dotProductEquiv ℝ (Fin n))).symm
+
+open scoped Matrix in
+/-- `ω((q, p), (q', p')) = p' ⬝ᵥ q - p ⬝ᵥ q'`. -/
+theorem coordinateSymplecticForm_apply (n : ℕ) (u w : (Fin n → ℝ) × (Fin n → ℝ)) :
+    coordinateSymplecticForm n u w = w.2 ⬝ᵥ u.1 - u.2 ⬝ᵥ w.1 :=
+  rfl
+
+/-- Layer 2: Hamilton's equations in coordinates, `X_H = (∂H/∂p, -∂H/∂q)`. The Hamiltonian
+vector field is the one of Layer 1, read in the model space through
+`NormedSpace.fromTangentSpace`. -/
+theorem hamiltonianVectorField_coordinateSymplecticForm {n : ℕ}
+    {H : (Fin n → ℝ) × (Fin n → ℝ) → ℝ} {x : (Fin n → ℝ) × (Fin n → ℝ)}
+    (hH : DifferentiableAt ℝ H x) :
+    NormedSpace.fromTangentSpace x
+        ((coordinateSymplecticForm n).constSmooth.hamiltonianVectorField H x) =
+      (fun i ↦ fderiv ℝ H x (0, Pi.single i 1), fun i ↦ -fderiv ℝ H x (Pi.single i 1, 0)) := by
+  sorry
+
+/-- Layer 2: the Poisson bracket of Layer 1 in coordinates,
+`{F, G} = Σ_i (∂F/∂q_i ∂G/∂p_i - ∂F/∂p_i ∂G/∂q_i)`. -/
+theorem poissonBracket_coordinateSymplecticForm {n : ℕ}
+    {F G : (Fin n → ℝ) × (Fin n → ℝ) → ℝ} {x : (Fin n → ℝ) × (Fin n → ℝ)}
+    (hF : DifferentiableAt ℝ F x) (hG : DifferentiableAt ℝ G x) :
+    (coordinateSymplecticForm n).constSmooth.poissonBracket F G x =
+      ∑ i, (fderiv ℝ F x (Pi.single i 1, 0) * fderiv ℝ G x (0, Pi.single i 1) -
+        fderiv ℝ F x (0, Pi.single i 1) * fderiv ℝ G x (Pi.single i 1, 0)) := by
+  sorry
+
+end TauCetiRoadmap.HamiltonianSystems
 
 /-! ## Layer 3: infinitesimal symmetries and moment maps -/
 
