@@ -122,6 +122,16 @@ theorem hasDerivAt_comp_of_isMIntegralCurveOn {σ : SmoothTwoForm I M} {F H : M 
     HasDerivAt (F ∘ γ) (σ.poissonBracket F H (γ t)) t := by
   sorry
 
+/-- Layer 2: conservation of energy. Along an integral curve of `X_H` on an open set `s` of times,
+a differentiable `H` takes the same value at any two times of a preconnected `T ⊆ s` (an
+interval). Its values on two connected components of `s` need not agree. -/
+theorem apply_eq_of_isMIntegralCurveOn {σ : SmoothTwoForm I M} {H : M → ℝ}
+    {γ : ℝ → M} {s T : Set ℝ} (hs : IsOpen s)
+    (hγ : IsMIntegralCurveOn γ (σ.hamiltonianVectorField H) s)
+    (hT : IsPreconnected T) (hTs : T ⊆ s) (hH : MDifferentiable I 𝓘(ℝ, ℝ) H)
+    {t₁ t₂ : ℝ} (ht₁ : t₁ ∈ T) (ht₂ : t₂ ∈ T) : H (γ t₁) = H (γ t₂) := by
+  sorry
+
 /-- `φ` is a symplectic map from `σ` to `σ'`: it pulls `σ'` back to `σ`. The model spaces of
 `M` and `M'` may differ, and `φ` need not be invertible: symplectic embeddings are symplectic
 maps. -/
@@ -199,14 +209,78 @@ theorem IsMomentMap.poissonBracket_eq_zero {σ : SmoothTwoForm I M} (hσ : σ.Is
     σ.poissonBracket (fun y ↦ μ y Z) F = 0 := by
   sorry
 
-/-- Layer 3: on a preconnected manifold, the cocycle of a moment map is a constant Lie algebra
-2-cocycle with trivial coefficients. -/
-theorem IsMomentMap.exists_twoCocycle [PreconnectedSpace M] {σ : SmoothTwoForm I M}
+/-- Layer 3: Noether's theorem, conservation form. If `F` is invariant under `Z`, then along an
+integral curve of `X_F` on an open set `s` of times, `μ_Z` takes the same value at any two times
+of a preconnected `T ⊆ s` (an interval). -/
+theorem IsMomentMap.apply_eq_of_isMIntegralCurveOn {σ : SmoothTwoForm I M} (hσ : σ.IsSymplectic)
+    {a : InfinitesimalAction I M 𝔤} {μ : M → Module.Dual ℝ 𝔤} (hμ : σ.IsMomentMap a μ)
+    {F : M → ℝ} (hF : σ.IsHamiltonian F)
+    {Z : 𝔤} (hinv : ∀ x, mvfderiv I F x (a.toLinearMap Z x) = 0)
+    {γ : ℝ → M} {s T : Set ℝ} (hs : IsOpen s)
+    (hγ : IsMIntegralCurveOn γ (σ.hamiltonianVectorField F) s)
+    (hT : IsPreconnected T) (hTs : T ⊆ s) {t₁ t₂ : ℝ} (ht₁ : t₁ ∈ T) (ht₂ : t₂ ∈ T) :
+    μ (γ t₁) Z = μ (γ t₂) Z := by
+  sorry
+
+/-- Layer 3: a moment map shifted by a constant `ν` is a moment map. -/
+theorem IsMomentMap.add_const {σ : SmoothTwoForm I M} {a : InfinitesimalAction I M 𝔤}
+    {μ : M → Module.Dual ℝ 𝔤} (hμ : σ.IsMomentMap a μ) (ν : Module.Dual ℝ 𝔤) :
+    σ.IsMomentMap a (fun x ↦ μ x + ν) := by
+  sorry
+
+/-- Layer 3: the shift equation at a point. Shifting the moment map by a constant `ν` changes
+its cocycle at `x` by `-ν ⁅Z, Z'⁆`. No hypothesis on `M` is involved. -/
+theorem IsMomentMap.momentCocycle_add_const {σ : SmoothTwoForm I M}
+    {a : InfinitesimalAction I M 𝔤} {μ : M → Module.Dual ℝ 𝔤} (hμ : σ.IsMomentMap a μ)
+    (ν : Module.Dual ℝ 𝔤) (x : M) (Z Z' : 𝔤) :
+    σ.momentCocycle (fun y ↦ μ y + ν) x Z Z' = σ.momentCocycle μ x Z Z' - ν ⁅Z, Z'⁆ := by
+  sorry
+
+/-- Layer 3: at every point, the cocycle of a moment map is a Lie algebra 2-cocycle with trivial
+coefficients. No connectedness or nonemptiness of `M` is involved. -/
+theorem IsMomentMap.exists_twoCocycle_apply_eq_momentCocycle {σ : SmoothTwoForm I M}
+    (hσ : σ.IsSymplectic) {a : InfinitesimalAction I M 𝔤} {μ : M → Module.Dual ℝ 𝔤}
+    (hμ : σ.IsMomentMap a μ) (x : M) :
+    ∃ c ∈ LieModule.Cohomology.twoCocycle ℝ 𝔤 (TrivialLieModule ℝ 𝔤 ℝ),
+      ∀ Z Z', ((c : LieModule.Cohomology.twoCochain ℝ 𝔤 (TrivialLieModule ℝ 𝔤 ℝ)) Z Z' :
+        TrivialLieModule ℝ 𝔤 ℝ) =
+          (TrivialLieModule.equiv ℝ 𝔤 ℝ).symm (σ.momentCocycle μ x Z Z') := by
+  sorry
+
+/-- Layer 3: independence of the point. On a preconnected manifold, the cocycle of a moment map
+takes the same value at any two points. -/
+theorem IsMomentMap.momentCocycle_eq_of_preconnectedSpace [PreconnectedSpace M]
+    {σ : SmoothTwoForm I M} (hσ : σ.IsSymplectic) {a : InfinitesimalAction I M 𝔤}
+    {μ : M → Module.Dual ℝ 𝔤} (hμ : σ.IsMomentMap a μ) (x y : M) (Z Z' : 𝔤) :
+    σ.momentCocycle μ x Z Z' = σ.momentCocycle μ y Z Z' := by
+  sorry
+
+/-- Layer 3: the evaluation equation. On a connected manifold (preconnected and nonempty), exactly
+one Lie algebra 2-cocycle with trivial coefficients takes the value `σ.momentCocycle μ x Z Z'` on
+`(Z, Z')` for every point `x`: the cocycle of the moment map. On the empty manifold the condition
+is vacuous and holds for every 2-cocycle, hence `[ConnectedSpace M]`. -/
+theorem IsMomentMap.existsUnique_twoCocycle [ConnectedSpace M] {σ : SmoothTwoForm I M}
     (hσ : σ.IsSymplectic) {a : InfinitesimalAction I M 𝔤} {μ : M → Module.Dual ℝ 𝔤}
     (hμ : σ.IsMomentMap a μ) :
-    ∃ c ∈ LieModule.Cohomology.twoCocycle ℝ 𝔤 (TrivialLieModule ℝ 𝔤 ℝ),
+    ∃! c : LieModule.Cohomology.twoCocycle ℝ 𝔤 (TrivialLieModule ℝ 𝔤 ℝ),
       ∀ x Z Z', ((c : LieModule.Cohomology.twoCochain ℝ 𝔤 (TrivialLieModule ℝ 𝔤 ℝ)) Z Z' :
-        TrivialLieModule ℝ 𝔤 ℝ) = (TrivialLieModule.equiv ℝ 𝔤 ℝ).symm (σ.momentCocycle μ x Z Z') := by
+        TrivialLieModule ℝ 𝔤 ℝ) =
+          (TrivialLieModule.equiv ℝ 𝔤 ℝ).symm (σ.momentCocycle μ x Z Z') := by
+  sorry
+
+/-- Layer 3: the shift equation. On a connected manifold, if `c` is the cocycle of `μ` and `c'`
+the cocycle of `μ + ν`, with `ν` constant, then `c' = c + d₁₂ ν`, where `ν` is read as a 1-cochain
+with values in `TrivialLieModule ℝ 𝔤 ℝ`. On the empty manifold the two evaluation hypotheses are
+vacuous and the conclusion fails in general, hence `[ConnectedSpace M]`. -/
+theorem IsMomentMap.eq_add_d₁₂_of_add_const [ConnectedSpace M] {σ : SmoothTwoForm I M}
+    {a : InfinitesimalAction I M 𝔤} {μ : M → Module.Dual ℝ 𝔤} (hμ : σ.IsMomentMap a μ)
+    (ν : Module.Dual ℝ 𝔤)
+    {c c' : LieModule.Cohomology.twoCochain ℝ 𝔤 (TrivialLieModule ℝ 𝔤 ℝ)}
+    (hc : ∀ x Z Z', c Z Z' = (TrivialLieModule.equiv ℝ 𝔤 ℝ).symm (σ.momentCocycle μ x Z Z'))
+    (hc' : ∀ x Z Z', c' Z Z' =
+      (TrivialLieModule.equiv ℝ 𝔤 ℝ).symm (σ.momentCocycle (fun y ↦ μ y + ν) x Z Z')) :
+    c' = c + LieModule.Cohomology.d₁₂ ℝ 𝔤 (TrivialLieModule ℝ 𝔤 ℝ)
+      ((TrivialLieModule.equiv ℝ 𝔤 ℝ).symm.toLinearMap ∘ₗ ν) := by
   sorry
 
 end TauCeti.SmoothTwoForm

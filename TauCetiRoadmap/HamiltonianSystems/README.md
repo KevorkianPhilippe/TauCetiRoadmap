@@ -52,9 +52,10 @@ These are pinned. Every item below uses them.
   fields of a left action; Layer 3 verifies it on each example.
 - **Moment map:** `μ : M → Module.Dual ℝ 𝔤` with `ι_{Z_M} ω = d⟨μ, Z⟩` for every `Z`, each
   `x ↦ μ x Z` smooth.
-- **Cocycle of a moment map:** `c(Z, Z') = {μ_Z, μ_Z'} - μ_{⁅Z, Z'⁆}`. Its class lives in the second
-  cohomology of `𝔤` with coefficients in `TrivialLieModule ℝ 𝔤 ℝ`, in Mathlib's
-  `LieModule.Cohomology` vocabulary (`twoCochain`, `d₁₂`, `twoCocycle`).
+- **Cocycle of a moment map:** `c(Z, Z') = {μ_Z, μ_Z'} - μ_{⁅Z, Z'⁆}`, a function on `M`. On a
+  connected `M` it is constant, and its class lives in the second cohomology of `𝔤` with
+  coefficients in `TrivialLieModule ℝ 𝔤 ℝ`, in Mathlib's `LieModule.Cohomology` vocabulary
+  (`twoCochain`, `d₁₂`, `twoCocycle`).
 - **Dictionary with Souriau** (*Structure des systèmes dynamiques*, 1970; equation numbers of that
   edition). For a symplectic form `σ = ω`:
   - the symplectic gradient `grad u` of (9.16), `-∇u = σ(grad u)`, is `-X_u`;
@@ -201,12 +202,28 @@ both consume Layer 1 and may proceed in parallel.
 
 ### Layer 2: dynamics
 
-- **Conservation along integral curves.** Let `γ` be an integral curve of `X_H` on an open set, and
-  `F` differentiable. Then `F ∘ γ` has derivative `{F, H} ∘ γ`, and `H` is constant along `γ`
-  (conservation of energy). On a boundaryless manifold, where local integral curves exist through
-  every point, a smooth `F` is constant along every integral curve of `X_H` if and only if
-  `{F, H} = 0`. First integrals are closed under the Poisson bracket (Poisson's theorem, from the
-  Jacobi identity).
+- **Conservation along integral curves.** Let `γ` be an integral curve of `X_H` on an open set `s`
+  of times (`IsMIntegralCurveOn γ X_H s`).
+  - The derivative. For `F` differentiable, `F ∘ γ` has derivative `{F, H} (γ t)` at every
+    `t ∈ s`.
+  - Constancy is stated on a preconnected set of times `T ⊆ s`, that is, on an interval. If `F`
+    is differentiable and `{F, H} (γ t) = 0` for every `t ∈ T`, then `F (γ t₁) = F (γ t₂)` for
+    all `t₁`, `t₂` in `T`. This covers `T = s` when `s` is an interval, and each connected
+    component of `s` in general. The values on two components of `s` need not agree: on the
+    canonical plane, for `H (q, p) = p` and `s = (-2, -1) ∪ (1, 2)`, the curve equal to `(t, 0)`
+    on the first interval and to `(t, 1)` on the second is an integral curve of `X_H = (1, 0)`
+    on `s`, and `H` takes the values `0` and `1` along it.
+  - Conservation of energy. `{H, H} = 0` for every function `H`: at each point, `X_H` is either
+    a vector `v` with `ω x v = dH_x`, and then `dH_x v = ω x v v = 0`, or `0`. So a
+    differentiable `H` takes the same value at any two times of a preconnected `T ⊆ s`.
+    Differentiability of `H` is the only hypothesis: it is the hypothesis on `F` of the
+    derivative statement, used with `F = H`.
+  - On a boundaryless manifold, for `ω` nondegenerate, `H` Hamiltonian (so that `X_H` is smooth
+    and local integral curves exist through every point) and `F` differentiable, `{F, H} = 0` if
+    and only if `F ∘ γ` is constant for every integral curve `γ` of `X_H` on an open interval.
+  - First integrals are closed under the Poisson bracket (Poisson's theorem, from the Jacobi
+    identity): for `ω` symplectic and `F`, `G`, `H` Hamiltonian, if `{F, H} = 0` and
+    `{G, H} = 0`, then `{{F, G}, H} = 0`.
 - **Symplectic maps and symplectomorphisms.**
   - The pullback `SmoothTwoForm.pullback` of a smooth two-form `ω'` on `M'` along a smooth map
     `φ : M → M'`: `(φ^* ω') x v w = ω' (φ x) (dφ v) (dφ w)`, with `dφ = mfderiv I I' φ x`. It is
@@ -244,8 +261,9 @@ both consume Layer 1 and may proceed in parallel.
 - **Milestone 2: Hamiltonian flows are symplectic.** In the same finite-dimensional setting, for
   `H` smooth and `ω` symplectic, let `(x, t) ∈ maximalIntegralCurveFlowDomain (X_H)` and
   `φ_t = fun y ↦ maximalIntegralCurve X_H y t`. Then
-  `ω (φ_t x) (dφ_t v) (dφ_t w) = ω x v w`. Also, `H ∘ φ_t = H` and every first integral is
-  preserved.
+  `ω (φ_t x) (dφ_t v) (dφ_t w) = ω x v w`. Also, `H (φ_t x) = H x`, and `F (φ_t x) = F x` for
+  every differentiable `F` with `{F, H} = 0`: the times `0` and `t` lie in the interval of
+  existence `maximalIntegralCurveInterval X_H x`, which is preconnected.
 - **Liouville's theorem.** For a symplectic form on a finite-dimensional real vector space `V`
   (`SymplecticForm.constSmooth`), `H` smooth, and `(x, t)` in the flow domain of `X_H`,
   `(fderiv ℝ φ_t x).det = 1`. Hence `φ_t` preserves the additive Haar measure `μ` of `V`:
@@ -260,22 +278,49 @@ both consume Layer 1 and may proceed in parallel.
   - The predicate `IsMomentMap ω a μ`.
   - Uniqueness: two moment maps `μ`, `μ'` of the same action differ by a function
     `ν : M → Module.Dual ℝ 𝔤` each of whose components `x ↦ ν x Z` has vanishing differential
-    (`Module.Dual ℝ 𝔤` carries no norm, so the statement is componentwise), hence by a constant
-    when `M` is preconnected.
-  - **Noether's theorem:** if `H` is invariant (`dH (Z_M) = 0`), then `{μ_Z, H} = 0` and `μ_Z` is
-    constant along every integral curve of `X_H`.
-- **The cocycle.** Let `μ` be a moment map on a preconnected `M`.
-  - `c(Z, Z') = {μ_Z, μ_Z'} - μ_{⁅Z, Z'⁆}` is constant, since its Hamiltonian vector field is
-    `-[Z_M, Z'_M] - (⁅Z, Z'⁆)_M = 0`.
-  - It is an element of `LieModule.Cohomology.twoCocycle ℝ 𝔤 (TrivialLieModule ℝ 𝔤 ℝ)`.
-  - Replacing `μ` by `μ + ν` changes `c` by the coboundary of `ν`.
-  - The class of `c` in `H²(𝔤, ℝ)` (built here: `twoCoboundary`, `secondCohomology`) is therefore
-    an invariant of the Hamiltonian action.
-  - `μ` can be chosen infinitesimally equivariant (`{μ_Z, μ_Z'} = μ_{⁅Z, Z'⁆}`) if and only if the
+    (`Module.Dual ℝ 𝔤` carries no norm, so the statement is componentwise). Hence, when `M` is
+    preconnected, `μ' = μ + ν` for a constant `ν : Module.Dual ℝ 𝔤`; this `ν` is unique when `M`
+    is moreover nonempty.
+  - **Noether's theorem:** if `H` is invariant (`dH (Z_M) = 0`), then `{μ_Z, H} = 0`. Hence, along
+    an integral curve `γ` of `X_H` on an open set `s` of times, `μ_Z ∘ γ` has derivative `0` at
+    every time of `s`, and takes the same value at any two times of a preconnected `T ⊆ s`. This
+    is the conservation item of Layer 2 for `F = μ_Z`, which is smooth; as there, the values on
+    two connected components of `s` need not agree.
+- **The cocycle.** Let `μ` be a moment map, and `ω` closed.
+  - The cocycle at a point. For `x : M`, `c_x(Z, Z') = {μ_Z, μ_Z'} x - μ x ⁅Z, Z'⁆`. It equals
+    `ω x (Z_M x) (Z'_M x) - μ x ⁅Z, Z'⁆`, so it is bilinear and alternating in `(Z, Z')`, and it
+    is a 2-cocycle: `c_x` is an element of
+    `LieModule.Cohomology.twoCocycle ℝ 𝔤 (TrivialLieModule ℝ 𝔤 ℝ)`, whose value on `(Z, Z')` is
+    `c_x(Z, Z')` read through `TrivialLieModule.equiv`. No connectedness or nonemptiness of `M`
+    is involved.
+  - The shift at a point. For a constant `ν : Module.Dual ℝ 𝔤`, `μ + ν` is a moment map, and its
+    cocycle at `x` is `c_x(Z, Z') - ν ⁅Z, Z'⁆`: the cocycle of `μ` at `x` plus `d₁₂ ν`, in
+    Mathlib's convention (`d₁₂ ν (Z, Z') = -ν ⁅Z, Z'⁆` for trivial coefficients). More generally,
+    the cocycle at `x` of another moment map `μ'` of the same action is `c_x + d₁₂ (μ' x - μ x)`.
+    No connectedness or nonemptiness of `M` is involved.
+  - Independence of the point. Each function `x ↦ c_x(Z, Z')` has vanishing differential, since
+    `-[Z_M, Z'_M] - (⁅Z, Z'⁆)_M = 0` is a Hamiltonian vector field of it. So `c_x = c_y` for all
+    `x`, `y` when `M` is preconnected.
+  - The cocycle of `μ`. On a connected `M` (`[ConnectedSpace M]`: preconnected and nonempty),
+    the cocycle `c_μ` of `μ` is `c_x` for a point `x` of `M`, and does not depend on that
+    point. It is the only 2-cochain satisfying the evaluation equation
+    `c_μ(Z, Z') = c_x(Z, Z')` for every `x`, and it satisfies the shift equation
+    `c_{μ + ν} = c_μ + d₁₂ ν` for every constant `ν`. Nonemptiness cannot be dropped. On the
+    empty manifold the evaluation equation holds for every 2-cochain, and `μ + ν = μ` for every
+    `ν`, so no cocycle depending on `μ` alone satisfies the shift equation as soon as some
+    `d₁₂ ν` is nonzero: for the Lie algebra with basis `h`, `e` and `⁅h, e⁆ = e`, and `ν e = 1`,
+    `d₁₂ ν (h, e) = -1`.
+  - The class. On a connected `M`, the class of `c_μ` in `H²(𝔤, ℝ)` (built here:
+    `twoCoboundary`, `secondCohomology`) is the same for all moment maps of the action, by
+    uniqueness and the shift equation: it is an invariant of the Hamiltonian action.
+  - On a connected `M`, the action has an infinitesimally equivariant moment map
+    (`{μ'_Z, μ'_Z'} = μ'_{⁅Z, Z'⁆}`), necessarily of the form `μ' = μ + ν`, if and only if the
     class vanishes.
-  - The central extension `LieAlgebra.ofTwoCocycle` of `𝔤` by `c` acts through the vector fields
-    `(Z, s) ↦ Z_M`, and `(Z, s) ↦ μ_Z + s` is an equivariant moment map for it: the obstruction
-    disappears on the central extension.
+  - On a connected `M`, the central extension `LieAlgebra.ofTwoCocycle` of `𝔤` by `c_μ` acts
+    through the vector fields `(Z, s) ↦ Z_M`, and `(Z, s) ↦ μ_Z + s` is an equivariant moment map
+    for it: the obstruction disappears on the central extension.
+  - The manifolds of the examples below and of Milestone 3 are real normed spaces, which are
+    connected.
 - **Examples and acceptance tests.**
   - *Translations.* The abelian Lie algebra `V` acts on a symplectic Banach space `(V, ω)` by
     constant vector fields. Its carrier is a type synonym of `V` with the zero bracket (`LieRing`,
