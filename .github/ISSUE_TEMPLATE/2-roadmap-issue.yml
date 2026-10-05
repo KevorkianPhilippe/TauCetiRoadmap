@@ -39,8 +39,11 @@ body:
         - HeegaardFloer
         - HodgeStructures
         - HopfRinow
+        - IntegralLattices
         - JacobianChallenge
         - LocalFieldsRamification
+        - LocalGaloisGroups
+        - ModularCurves
         - ModularForms
         - Multiquadratic
         - NumberFieldArithmetic
@@ -48,7 +51,9 @@ body:
         - OptimalTransport
         - OrthogonalSpinGroups
         - PDE
+        - PeripheralActions
         - PolynomialGaloisGroups
+        - ProfiniteArithmetic
         - ProfiniteCohomology
         - ProfiniteProPGroups
         - QuadraticFormInvariants
