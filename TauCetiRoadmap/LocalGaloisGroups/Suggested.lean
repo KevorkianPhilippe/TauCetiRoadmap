@@ -3,7 +3,7 @@ import TauCeti.Algebra.MonoidAlgebra.Exactness
 import TauCeti.NumberTheory.LocalField.AbsoluteRamificationIndex
 import TauCeti.RepresentationTheory.Homological.ContCohomology.Inflation.Basic
 import TauCeti.Topology.Algebra.Group.Profinite.Free.Basic
-import TauCeti.Topology.Algebra.Group.Profinite.ProP.Prescription
+import TauCeti.Topology.Algebra.Group.Profinite.ProP.Prescription.Basic
 import TauCetiRoadmap.ProfiniteCohomology.Suggested
 import TauCetiRoadmap.ProfiniteProPGroups.Suggested
 import TauCetiRoadmap.LocalFieldsRamification.Suggested
@@ -330,8 +330,7 @@ theorem ties four separate conventions together — Mathlib's `cyclotomicCharact
 arithmetic-Frobenius `artinMap`, the field norm, and the inverse — and it is a **named theorem
 with a supplier proof**, so a change of normalization in any one of them breaks this file instead
 of silently changing the marked relator of Layer 6. `ClassFieldTheory.cyclotomicCharacter_artinMap`
-is proved in that roadmap's Layer 11, from global reciprocity over `ℚ`, so this theorem, and every
-statement here that consumes it, depends on `ClassFieldTheory` Layers 10 and 11. -/
+is proved in that roadmap's Layer 7, by comparison with the explicit cyclotomic symbols over `ℚ`. -/
 theorem localCyclotomicCharacter_artinMap_unit (u : Fˣ)
     (hu : ValuativeRel.valuation F (u : F) = 1) (σ : Field.absoluteGaloisGroup F)
     (hσ : (QuotientGroup.mk σ : Field.absoluteGaloisGroupAbelianization F)
@@ -342,8 +341,7 @@ theorem localCyclotomicCharacter_artinMap_unit (u : Fˣ)
 
 /-- The `ℚ_p` specialization, again as a closed proof. Together with the theorem above this pins
 the sign of the exponent: with the geometric normalization the right-hand side would be `u`.
-`ClassFieldTheory.cyclotomicCharacter_artinMap_padic` is proved in that roadmap's Layer 11, from
-global reciprocity over `ℚ`, so this theorem depends on `ClassFieldTheory` Layers 10 and 11. -/
+`ClassFieldTheory.cyclotomicCharacter_artinMap_padic` is proved in that roadmap's Layer 7. -/
 theorem localCyclotomicCharacter_artinMap_padic [IsNonarchimedeanLocalField ℚ_[p]] (u : ℤ_[p]ˣ)
     (σ : Field.absoluteGaloisGroup ℚ_[p])
     (hσ : (QuotientGroup.mk σ : Field.absoluteGaloisGroupAbelianization ℚ_[p])
@@ -351,23 +349,15 @@ theorem localCyclotomicCharacter_artinMap_padic [IsNonarchimedeanLocalField ℚ_
     localCyclotomicCharacter p ℚ_[p] σ = u⁻¹ :=
   ClassFieldTheory.cyclotomicCharacter_artinMap_padic p u σ hσ
 
-/-- **The value at the uniformizer `p` of `ℚ_p`**: `χ_cyc(Art_{ℚ_p}(p)) = 1`. For every `n`, `p`
-is the norm of `1 - ζ` from `ℚ_p(ζ)`, `ζ` a primitive `p^n`-th root of unity: Mathlib's
-`IsPrimitiveRoot.norm_sub_one_of_prime_ne_two` and `IsPrimitiveRoot.norm_sub_one_two`, whose
-hypothesis `Irreducible (cyclotomic (p ^ n) ℚ_[p])` is `irreducible_cyclotomic_prime_pow_ratPadic`.
-So `p` lies in the norm group of `ℚ_p(μ_{p^n})`, which the finite Artin map kills
-(`ClassFieldTheory.normResidue`), and the finite map is the restriction of the absolute one
-(`ClassFieldTheory.artinMap_restrict`). A lift `σ` of `Art_{ℚ_p}(p)` therefore fixes `μ_{p^n}` for
-every `n`, so `χ_cyc(σ) ≡ 1 mod p^n` by `cyclotomicCharacter.spec`, and `χ_cyc(σ) = 1` by
-`PadicInt.ext_of_toZModPow`. It consumes no cyclotomic normalization of the Artin map on units, so
-it does not depend on `ClassFieldTheory` Layers 10 and 11. -/
+/-- **The value at the uniformizer `p` of `ℚ_p`**: `χ_cyc(Art_{ℚ_p}(p)) = 1`, as a closed proof
+from `ClassFieldTheory.cyclotomicCharacter_artinMap_padic_uniformizer`. -/
 theorem localCyclotomicCharacter_artinMap_padic_uniformizer [IsNonarchimedeanLocalField ℚ_[p]]
     (σ : Field.absoluteGaloisGroup ℚ_[p])
     (_hσ : (QuotientGroup.mk σ : Field.absoluteGaloisGroupAbelianization ℚ_[p])
       = ClassFieldTheory.artinMap ℚ_[p]
           (Units.mk0 (p : ℚ_[p]) (Nat.cast_ne_zero.mpr (Fact.out : p.Prime).ne_zero))) :
     localCyclotomicCharacter p ℚ_[p] σ = 1 :=
-  sorry
+  ClassFieldTheory.cyclotomicCharacter_artinMap_padic_uniformizer p σ _hσ
 
 /-- **The uniformizer half of the comparison**, and the second generator of the orientation image.
 For a uniformizer `π` of `F` with residue degree `f = f(F/ℚ_p)`,
@@ -379,8 +369,7 @@ Its inputs are three. Write `N_{F/ℚ_p}(π) = u · p^f` with `u ∈ ℤ_pˣ`. N
 cyclotomic character is read through that map
 (`localCyclotomicCharacter_absoluteGaloisGroupExtend`);
 `localCyclotomicCharacter_artinMap_padic` gives `u⁻¹` on the first factor and
-`localCyclotomicCharacter_artinMap_padic_uniformizer` gives `1` on the second. Through
-`localCyclotomicCharacter_artinMap_padic` it depends on `ClassFieldTheory` Layers 10 and 11.
+`localCyclotomicCharacter_artinMap_padic_uniformizer` gives `1` on the second.
 
 ⚠ This theorem is **not** a consequence of the unit case. See the counterexample in
 `range_localCyclotomicCharacter`: `K(μ_{p^n})/K` need not be totally ramified, so `Kˣ` is not
@@ -1708,13 +1697,45 @@ theorem padicCompletionUnitsOf_norm_algEquiv (σ : L ≃ₐ[K] L) (x : Lˣ) :
 
 /-! ### Step 3: the Tate module of a layer and its integral decomposition -/
 
+/-- `A(L)` as a representation of `Gal(L/K)` over `ℤ_p`, through its `ℤ_p[Gal(L/K)]`-module
+structure `padicCompletionUnitsModule`. Mathlib's group cohomology takes the group and the
+coefficient ring in one universe, so the fields are in `Type`. -/
+noncomputable abbrev padicCompletionUnitsRep (K L : Type) [Field K] [Field L] [Algebra K L] :
+    Rep ℤ_[p] (L ≃ₐ[K] L) :=
+  Rep.ofModuleMonoidAlgebra.obj
+    (ModuleCat.of (MonoidAlgebra ℤ_[p] (L ≃ₐ[K] L)) (Additive ↥(padicCompletionUnits p L)))
+
+/-- **Step 3, the cohomology of `A(L)` on the layer.** There is a class `u ∈ H²(Gal(L/K), A(L))`
+whose restriction to every subgroup `H` generates `H²(H, A(L))`, a group of order the `p`-part of
+`#H`, and `H¹(H, A(L)) = 0`. The class is the image of the fundamental class of the local class
+formation along `padicCompletionUnitsOf`, whose kernel (the roots of unity of order prime to `p`)
+and cokernel (`ℤ_p/ℤ`, along the valuation) have bijective multiplication by `p`; so by
+`ClassFieldTheory.TateCohomology.primaryComponent_tateCohomology_eq_bot` it induces
+`Ĥⁱ(H, Lˣ)(p) ≅ Ĥⁱ(H, A(L))`, and Hilbert 90 with Tau Ceti's `ClassFormation.h1_subgroupLayer`,
+`ClassFormation.card_H2_subgroupLayer` and `ClassFormation.fundamentalClass_restrict_generates`
+gives the three clauses. The reciprocity identification of Step 1 is not used. -/
+theorem exists_padicCompletionUnitsRep_class (K L : Type) [Field K] [Field L] [Algebra K L]
+    [Algebra ℚ_[p] L] [Module.Finite ℚ_[p] L] [Algebra ℚ_[p] K] [Module.Finite ℚ_[p] K]
+    [IsScalarTower ℚ_[p] K L] [IsGalois K L] [FiniteDimensional K L] :
+    ∃ u : groupCohomology (padicCompletionUnitsRep p K L) 2,
+      ∀ S : Subgroup (L ≃ₐ[K] L),
+        Subsingleton (groupCohomology (Rep.res S.subtype (padicCompletionUnitsRep p K L)) 1) ∧
+          AddSubgroup.zmultiples
+              (groupCohomology.map S.subtype (𝟙 (Rep.res S.subtype (padicCompletionUnitsRep p K L)))
+                2 u) = ⊤ ∧
+          Nat.card (groupCohomology (Rep.res S.subtype (padicCompletionUnitsRep p K L)) 2) =
+            p ^ padicValNat p (Nat.card S) :=
+  sorry
+
 /-- **Step 3, the Tate module of the layer** — the module `Y = I_{G_K}/I_{G_L} I_{G_K}` of NSW
 (5.6.5) and the proof of (7.4.1), packaged by the properties the decomposition consumes: a
 finitely generated `ℤ_p[Gal(L/K)]`-module of projective dimension at most one that is an extension
-of the augmentation ideal `I_{Gal(L/K)}` by `A(L)`. Projective dimension at most one is
-cohomological triviality, which is Tate's theorem (NSW (3.1.5)) for the fundamental class of the
-layer transported to `A(L)` along the reciprocity identification of Step 1; the extension class is
-that class. The decomposition below uses only the properties recorded here, so the package
+of the augmentation ideal `I_{Gal(L/K)}` by `A(L)`. Projective dimension at most one follows from
+cohomological triviality by the theorem of Nakayama and Rim
+(`ClassFieldTheory.TateCohomology.projective_ker_of_isZero_res`), and cohomological triviality is
+Tate's criterion for the splitting module of the class of `exists_padicCompletionUnitsRep_class`,
+the image of the fundamental class of the layer along `padicCompletionUnitsOf`; the extension class
+is that class. The decomposition below uses only the properties recorded here, so the package
 carries nothing else. -/
 structure TateModule where
   /-- The carrier `Y`. -/
@@ -1865,14 +1886,14 @@ theorem tameFrameModule_torsion_linearEquiv (σ τ : L ≃ₐ[K] L) (a b : ℕ)
       ↥(pPowerTorsion p (L ≃ₐ[K] L) (Additive ↥(padicCompletionUnits p L)))) :=
   sorry
 
-/-- **Step 3, existence of the Tate module** (NSW (5.6.5) for the extension `0 → A(L) → Y → I_G → 0`
-and (3.1.5), Tate's theorem, for the cohomological triviality). Its inputs are the local class
-formation — `ClassFieldTheory.ClassFormation`, which is Tau Ceti's
-`TauCeti.ClassFieldTheory.ClassFormation` re-exported, with Tau Ceti's fundamental class
-`ClassFormation.fundamentalClass` and its generation theorem
-`ClassFormation.fundamentalClass_generates`, and `ClassFieldTheory.tateTheorem` — and the
-reciprocity identification `A(L) ≃ G_L^{ab}(p)` of Step 1, which carries the fundamental class of
-`Lˣ` to `A(L)`. -/
+/-- **Step 3, existence of the Tate module** (NSW (5.6.5) for the extension `0 → A(L) → Y → I_G → 0`).
+`Y` is Tau Ceti's splitting module `Rep.splittingModule` of the class of
+`exists_padicCompletionUnitsRep_class` (`Rep.splittingModuleSES_shortExact`), cohomologically
+trivial by Tau Ceti's criterion `TauCeti.TateCohomology.isZero_of_forall_isPGroup` in degrees `1`
+and `2` (`Rep.map_splittingModuleIncl_res_eq_zero` makes the connecting map onto), and of projective
+dimension at most one by the theorem of Nakayama and Rim,
+`ClassFieldTheory.TateCohomology.projective_ker_of_isZero_res`, applied to a copy of `Gal(L/K)` in
+`Type`. -/
 theorem nonempty_tateModule : Nonempty (TateModule p L K) :=
   sorry
 
