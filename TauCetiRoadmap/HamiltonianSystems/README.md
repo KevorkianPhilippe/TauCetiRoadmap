@@ -19,9 +19,9 @@ symplectic content is the matrix group `Matrix.symplecticGroup`.
 
 This roadmap builds that layer, at the generality of Banach manifolds with a weakly nondegenerate
 form (so that phase spaces of field theories fit without change). On a finite-dimensional
-symplectic vector space, Tau Ceti's Hamiltonian vector field and, where it is defined, its
-globally Lipschitz Hamiltonian flow are identified with special cases of Layers 1 and 2. Its
-summit is **Souriau's mass
+symplectic vector space, it identifies Tau Ceti's Hamiltonian vector field and, where it is
+defined, its globally Lipschitz Hamiltonian flow with special cases of Layers 1 and 2 (targets
+there). Its summit is **Souriau's mass
 theorem in algebraic form**: for the Galilean Lie algebra acting on the space of motions of a free
 particle of mass `m`, the moment map exists, its cocycle is `m` times a fixed 2-cocycle, and the
 second cohomology `H²(𝔤𝔞𝔩, ℝ)` is one-dimensional, spanned by that class. The mass of a particle is
@@ -134,9 +134,10 @@ These are pinned. Every item below uses them.
     time map preserves `ω` on tangent vectors.
   - `TauCeti/Geometry/Symplectic/Hamiltonian/TimeDependent.lean`: the time-dependent Hamiltonian
     evolution, built on the same field.
-  - They are the finite-dimensional, constant-form, globally Lipschitz special cases of the
-    Hamiltonian vector field of Layer 1 and of the flows of Layer 2, whose general statements keep
-    their generality.
+  - `Basic.lean` is the finite-dimensional, constant-form case of the Hamiltonian vector field of
+    Layer 1, and `Flow.lean`, for a globally Lipschitz field, the case of the maximal flows of
+    Layer 2; `TimeDependent.lean` consumes the same field. The general statements of Layers 1 and
+    2 keep their generality.
 - **Mathlib, differential calculus.**
   - `extDeriv` and `extDerivWithin` on normed spaces, with `extDeriv_apply_vectorField`, the
     invariant formula for `dω` evaluated on vector fields.
@@ -362,7 +363,11 @@ both consume Layer 1 and may proceed in parallel.
     `∂H/∂p_i = fderiv ℝ H x (0, Pi.single i 1)`. For `H` differentiable at `x`,
     `X_H x = (∂H/∂p, -∂H/∂q)`. For `H` differentiable, a curve `t ↦ (q t, p t)` is an integral
     curve of `X_H` on an open set `s` of times exactly when `q_i' = ∂H/∂p_i` and
-    `p_i' = -∂H/∂q_i` along the curve, at every time of `s`.
+    `p_i' = -∂H/∂q_i` along the curve, at every time of `s`. For `σ = coordinateSymplecticForm n`
+    this is the comparison of Layer 1: Tau Ceti's `σ.hamiltonianVectorField H x` is
+    `(∂H/∂p, -∂H/∂q)` for `H` differentiable at `x`, and the coordinate statement is proved
+    through that comparison and `SymplecticForm.eq_hamiltonianVectorField_iff`, by checking the
+    contraction equation on `(∂H/∂p, -∂H/∂q)`.
   - The bracket in coordinates. For `F` and `G` differentiable at `x`,
     `{F, G} x = Σ_i (∂F/∂q_i ∂G/∂p_i - ∂F/∂p_i ∂G/∂q_i)`.
   - Reindexing. `Fin (2 * n) → ℝ` carries the transport of this form along the linear
@@ -617,19 +622,19 @@ One owner per shared construction. Each entry states this roadmap's side of the 
     second Poisson bracket for them.
 - **Heegaard Floer, Lane F2.1 (#957), and symplectic geometry (#1049).** F2.1 builds the strongly
   nondegenerate contraction inverse in Tau Ceti's shared symplectic API, following Layer 1: on
-  arbitrary covectors, with its smooth dependence on the base point, and with its `dF`
-  specialization to `hamiltonianVectorField`; it uses the same inverse on general one-forms for
-  the Moser field. The SymplecticGeometry roadmap consumes that construction and the Hamiltonian
-  API of this roadmap.
-  - There is one contraction inverse. Layer 1 states it in that order, the inverse on arbitrary
-    covectors and its smooth dependence before the `dF` specialization, at this roadmap's
-    generality: a strongly nondegenerate form on a Banach manifold. Its finite-dimensional uses
-    are the case `[FiniteDimensional ℝ E]`, where nondegeneracy implies strong nondegeneracy
-    (`isStronglyNondegenerate_of_finiteDimensional`).
-  - The comparisons are this roadmap's: the `dF` specialization (Layer 1), the inverse and the
-    Hamiltonian vector field of a constant form against Tau Ceti's (Layer 1), and the maximal
-    flow against Tau Ceti's globally Lipschitz flow (Layer 2). No second contraction inverse and
-    no second Hamiltonian vector field is built.
+  arbitrary covectors, with its smooth dependence on the base point; it pins the `dF`
+  specialization to `hamiltonianVectorField`, which is the Layer 1 item, and uses the same
+  inverse on general one-forms for the Moser field. The SymplecticGeometry roadmap consumes that
+  construction and the Hamiltonian API of this roadmap.
+  - There is one contraction inverse, built once at the generality of Layer 1: a strongly
+    nondegenerate form on a Banach manifold. Layer 1 states it in that order, the inverse on
+    arbitrary covectors and its smooth dependence before the `dF` specialization. F2.1's
+    finite-dimensional statement is its case `[FiniteDimensional ℝ E]`, where nondegeneracy
+    implies strong nondegeneracy (`isStronglyNondegenerate_of_finiteDimensional`).
+  - The `dF` specialization is stated once, in Layer 1, in the form F2.1 pins. The comparisons of
+    the inverse and of the Hamiltonian vector field of a constant form with Tau Ceti's (Layer 1),
+    and of the maximal flow with Tau Ceti's globally Lipschitz flow (Layer 2), are this
+    roadmap's. No second contraction inverse and no second Hamiltonian vector field is built.
 
 ## References
 
