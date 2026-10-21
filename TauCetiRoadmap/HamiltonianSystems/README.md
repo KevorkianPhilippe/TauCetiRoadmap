@@ -5,15 +5,23 @@ normed space (`TauCeti.SmoothTwoForm`), closedness read in charts (`SmoothTwoFor
 fiberwise nondegeneracy (`SmoothTwoForm.IsNondegenerate`), their conjunction
 (`SmoothTwoForm.IsSymplectic`), the canonical form on the linear cotangent models `V × Module.Dual ℝ V`
 and `V × StrongDual ℝ V`, and maximal flows of vector fields
-(`TauCeti.maximalIntegralCurve`). What it does not have is the mechanics that lives on a symplectic
-manifold: the Hamiltonian vector field of a function, the Poisson bracket, conservation laws, the
-symplectic nature of Hamiltonian flows, infinitesimal symmetries and their moment maps, and the
-cohomological obstruction to equivariance that makes the mass of a Galilean particle a
-cohomology class. Mathlib has none of it either: its symplectic content is the matrix group
-`Matrix.symplecticGroup`.
+(`TauCeti.maximalIntegralCurve`). On a finite-dimensional real normed space with a constant
+symplectic form, it also has the Hamiltonian vector field (`SymplecticForm.hamiltonianVectorField`,
+with the convention `ω(X_H, v) = dH(v)` used here) and, when that field is globally Lipschitz, the
+Hamiltonian flow (`SymplecticForm.hamiltonianFlow`), which conserves a differentiable Hamiltonian
+and, for a `C²` one, has symplectic time maps; these modules are newer than this repository's Tau
+Ceti pin (see the inventory below). Beyond that case, it does not have the mechanics that lives on
+a symplectic manifold: the Hamiltonian vector field of a function, the Poisson bracket,
+conservation laws along integral curves, the symplectic nature of maximal Hamiltonian flows,
+infinitesimal symmetries and their moment maps, and the cohomological obstruction to equivariance
+that makes the mass of a Galilean particle a cohomology class. Mathlib has none of it either: its
+symplectic content is the matrix group `Matrix.symplecticGroup`.
 
 This roadmap builds that layer, at the generality of Banach manifolds with a weakly nondegenerate
-form (so that phase spaces of field theories fit without change). Its summit is **Souriau's mass
+form (so that phase spaces of field theories fit without change). On a finite-dimensional
+symplectic vector space, Tau Ceti's Hamiltonian vector field and, where it is defined, its
+globally Lipschitz Hamiltonian flow are identified with special cases of Layers 1 and 2. Its
+summit is **Souriau's mass
 theorem in algebraic form**: for the Galilean Lie algebra acting on the space of motions of a free
 particle of mass `m`, the moment map exists, its cocycle is `m` times a fixed 2-cocycle, and the
 second cohomology `H²(𝔤𝔞𝔩, ℝ)` is one-dimensional, spanned by that class. The mass of a particle is
@@ -85,7 +93,10 @@ These are pinned. Every item below uses them.
     `SmoothTwoForm.isClosed_iff_forall_extDerivWithin_inChartAt_self`, `SmoothTwoForm.isClosed_const`.
   - Nondegeneracy and symplectic forms: `SmoothTwoForm.IsNondegenerate`,
     `SmoothTwoForm.isNondegenerate_iff_separatingLeft`, `SmoothTwoForm.IsSymplectic`,
-    `SymplecticForm.constSmooth`, `SymplecticForm.isSymplectic_constSmooth`.
+    `SymplecticForm.constSmooth` (on the model `𝓘(ℝ, V)`),
+    `SymplecticForm.isSymplectic_constSmooth`, and
+    `SymplecticForm.fromTangentSpace_constSmooth_apply` (its evaluation through
+    `NormedSpace.fromTangentSpace`).
   - The linear symplectic form `TauCeti.SymplecticForm`, `SymplecticForm.IsSymplectomorphism` (a
     predicate on a linear equivalence), `SymplecticForm.transport`, and the binary product
     `SymplecticForm.prod`.
@@ -97,8 +108,35 @@ These are pinned. Every item below uses them.
   - `maximalIntegralCurve`, `maximalIntegralCurveInterval`, `maximalIntegralCurveFlowDomain`,
     `isOpen_maximalIntegralCurveFlowDomain`, the flow law `maximalIntegralCurve_add`, and
     `contMDiffOn_maximalIntegralCurve` (finite dimension, boundaryless, Hausdorff).
+  - An integral curve through `x` on an open interval around `0` lies in the maximal interval
+    (`IsMIntegralCurveOn.subset_maximalIntegralCurveInterval`) and agrees there with the maximal
+    curve (`IsMIntegralCurveOn.eqOn_maximalIntegralCurve`, for a `C¹` field on a boundaryless
+    Hausdorff manifold).
   - `IsMIntegralCurveOn.map_of_mfderiv_eq`, and `mvfderiv_mlieBracket` (the manifold bracket read
     through a differential).
+  - `flowOfLipschitz`, the global flow of a globally Lipschitz vector field on a Banach space.
+- **Tau Ceti, Hamiltonian dynamics on a symplectic vector space.** These modules are newer than
+  this repository's Tau Ceti pin. They are cited at Tau Ceti commit `8562ddf8`, and Layers 1 and 2
+  state the comparisons with them. For a finite-dimensional real normed space `V` and
+  `ω : SymplecticForm V`:
+  - `TauCeti/Geometry/Symplectic/Hamiltonian/Basic.lean`: `SymplecticForm.hamiltonianVectorField`,
+    the inverse of contraction with `ω` (`ω.toBilinForm.toContinuousBilinearMap.inverse`) applied
+    to `fderiv ℝ H x`, with the convention `ω (X_H x) v = fderiv ℝ H x v` of this roadmap;
+    `apply_hamiltonianVectorField`, `eq_hamiltonianVectorField_iff` (the contraction equation
+    characterizes the field), `contDiff_hamiltonianVectorField` (a `C^(n+1)` Hamiltonian has a
+    `C^n` field), `apply_fderiv_hamiltonianVectorField` (contracting the linearization gives the
+    Hessian) and `apply_fderiv_hamiltonianVectorField_add` (for a `C²` Hamiltonian the
+    linearization is infinitesimally symplectic).
+  - `TauCeti/Geometry/Symplectic/Hamiltonian/Flow.lean`: for a globally Lipschitz field,
+    `SymplecticForm.hamiltonianFlow`, which is `flowOfLipschitz` of that field, with Hamilton's
+    equation `hasDerivAt_hamiltonianFlow`, conservation of a differentiable Hamiltonian
+    `hamiltonianFlow_conserves`, and `apply_fderiv_hamiltonianFlow`: for a `C²` Hamiltonian each
+    time map preserves `ω` on tangent vectors.
+  - `TauCeti/Geometry/Symplectic/Hamiltonian/TimeDependent.lean`: the time-dependent Hamiltonian
+    evolution, built on the same field.
+  - They are the finite-dimensional, constant-form, globally Lipschitz special cases of the
+    Hamiltonian vector field of Layer 1 and of the flows of Layer 2, whose general statements keep
+    their generality.
 - **Mathlib, differential calculus.**
   - `extDeriv` and `extDerivWithin` on normed spaces, with `extDeriv_apply_vectorField`, the
     invariant formula for `dω` evaluated on vector fields.
@@ -106,6 +144,10 @@ These are pinned. Every item below uses them.
     `VectorField.leibniz_identity_mlieBracket`.
   - Integral curves (`IsMIntegralCurveOn`, `exists_isMIntegralCurveAt_of_contMDiffAt_boundaryless`),
     smooth functions `C^∞⟮I, M; ℝ⟯` with their algebra structure, `contDiffAt_map_inverse`.
+  - On a normed space `V` as a manifold over `𝓘(ℝ, V)`: the identification
+    `NormedSpace.fromTangentSpace x : TangentSpace 𝓘(ℝ, V) x ≃L[ℝ] V`, and `mvfderiv_eq_fderiv`
+    and `mfderiv_eq_fderiv`, which express `mvfderiv` and `mfderiv` through `fderiv` and that
+    identification.
 - **Mathlib, Lie algebras.**
   - `LieRing`, `LieAlgebra`, `LieSubalgebra`, the commutator Lie algebra of matrices, and
     `skewAdjointLieSubalgebra`.
@@ -118,11 +160,17 @@ These are pinned. Every item below uses them.
 
 - Hamiltonian vector fields, Hamiltonian functions, and the Poisson bracket on a weakly symplectic
   Banach manifold; the Lie algebra of Hamiltonian functions.
+- The contraction inverse of a strongly nondegenerate two-form, on arbitrary covectors, with its
+  smooth dependence on the base point: one construction, which HeegaardFloer F2.1 builds and
+  Layer 1 specializes to differentials (see *Relation to sibling roadmaps*).
+- The comparison of the Hamiltonian vector field of Layer 1, and of the maximal Hamiltonian flows
+  of Layer 2, with Tau Ceti's Hamiltonian vector field and globally Lipschitz Hamiltonian flow on a
+  finite-dimensional symplectic vector space.
 - Two degree-two cases of the calculus of differential forms, which the differential geometry
   roadmap owns (see *Relation to sibling roadmaps*): the invariant formula for a closed two-form
   on a manifold, and the pullback of a two-form.
-- Symplectic maps and symplectomorphisms between manifolds, conservation laws, and symplecticity
-  of Hamiltonian flows.
+- Symplectic maps and symplectomorphisms between manifolds, conservation laws along integral
+  curves, and symplecticity of maximal Hamiltonian flows.
 - The canonical model in coordinates, on `(Fin n → ℝ) × (Fin n → ℝ)` and on `Fin (2 * n) → ℝ`.
 - Infinitesimal actions, moment maps, their cocycle and its class.
 - 2-coboundaries and `H²` of a Lie algebra with trivial coefficients, which Mathlib does not
@@ -155,17 +203,52 @@ both consume Layer 1 and may proceed in parallel.
   - Leibniz. Under the hypotheses of linearity, `F • Y + G • X` is a Hamiltonian vector field of
     `F * G`, and `X_{FG} x = F x • X_G x + G x • X_F x`.
   - Locality: `X_F` at `x` depends only on the germ of `F` at `x`.
-- **Strong nondegeneracy.**
+- **Strong nondegeneracy and the contraction inverse.**
   - `ω` is strongly nondegenerate when, at every point, `v ↦ ω x v` is onto
     `TangentSpace I x →L[ℝ] ℝ`.
   - A strongly nondegenerate form is nondegenerate (`IsStronglyNondegenerate.isNondegenerate`):
     if `ω x w = 0`, every `ω x v` vanishes at `w` by antisymmetry, hence every continuous linear
     form does, and `w = 0` by the Hahn-Banach theorem.
   - A nondegenerate form on a finite-dimensional manifold is strongly nondegenerate.
-  - For a strongly nondegenerate `ω`, every smooth function is Hamiltonian and
-    `hamiltonianVectorField ω F` is smooth. The inverse of `v ↦ ω x v` is a continuous linear
-    equivalence by the open mapping theorem, and its smooth dependence on `x` comes from
-    `contDiffAt_map_inverse` in charts.
+  - The contraction inverse, on arbitrary covectors. For `ω` strongly nondegenerate and `x : M`,
+    `v ↦ ω x v` is a continuous linear bijection from `TangentSpace I x` onto
+    `TangentSpace I x →L[ℝ] ℝ` (injective by nondegeneracy), hence a continuous linear
+    equivalence by the open mapping theorem. Its inverse sends every continuous linear form `α`
+    on `TangentSpace I x`, not only a differential, to the unique `v` with `ω x v = α`. It is the
+    one contraction inverse, which HeegaardFloer F2.1 builds following this layer (see *Relation
+    to sibling roadmaps*).
+  - Its smooth dependence on the base point, from `contDiffAt_map_inverse` in charts: applied at
+    each point to a smooth one-form, it gives a smooth vector field. One-forms are degree one of
+    the differential geometry roadmap's carrier `SmoothForm I M ℝ 1`, read at each point as
+    continuous linear forms on `TangentSpace I x`.
+  - The Hamiltonian specialization, after the two items above. For every `F` and `x`, the
+    inverse applied to `mvfderiv I F x` is `hamiltonianVectorField ω F x`. Hence every smooth
+    function is Hamiltonian, and `hamiltonianVectorField ω F` is smooth.
+- **Comparison with Tau Ceti's Hamiltonian vector field.** Let `V` be a finite-dimensional real
+  normed space, `σ : SymplecticForm V` and `H : V → ℝ`. The constant form
+  `σ.constSmooth : SmoothTwoForm 𝓘(ℝ, V) V` is symplectic
+  (`SymplecticForm.isSymplectic_constSmooth`), and its Hamiltonian vector field is
+  Tau Ceti's `σ.hamiltonianVectorField H` (`TauCeti/Geometry/Symplectic/Hamiltonian/Basic.lean`):
+  for every `x : V`,
+  ```lean
+  NormedSpace.fromTangentSpace x (σ.constSmooth.hamiltonianVectorField H x)
+    = σ.hamiltonianVectorField H x
+  ```
+  - No hypothesis on `H` is needed: at every `x` both sides solve the same contraction equation,
+    whose solution is unique, and both are `0` where `H` is not differentiable.
+  - The statement keeps the model `𝓘(ℝ, V)` of `SymplecticForm.constSmooth` and the explicit
+    identification `NormedSpace.fromTangentSpace x`, rather than the definitional equality of
+    `TangentSpace 𝓘(ℝ, V) x` with `V`. The proof goes through Tau Ceti's characterization
+    `SymplecticForm.eq_hamiltonianVectorField_iff`, the evaluation
+    `SymplecticForm.fromTangentSpace_constSmooth_apply`, and Mathlib's `mvfderiv_eq_fderiv`.
+  - The same comparison for the inverse: for `σ.constSmooth`, the contraction inverse at `x`, read
+    through `NormedSpace.fromTangentSpace x` on vectors and on covectors, is
+    `σ.toBilinForm.toContinuousBilinearMap.inverse`, the inverse by which Tau Ceti defines
+    `SymplecticForm.hamiltonianVectorField`.
+  - The constant-form results of that module are consumed through this comparison, not proved
+    again: smoothness of the field of a `C^(n+1)` Hamiltonian (`contDiff_hamiltonianVectorField`),
+    and the identities of its linearization (`apply_fderiv_hamiltonianVectorField`,
+    `apply_fderiv_hamiltonianVectorField_add`).
 - **The Poisson bracket** `poissonBracket ω F G`, with the pinned definition. It is `dF (X_G)`,
   so its two arguments carry different hypotheses.
   - It is linear in `F`: `{aF + bF', G} x = a {F, G} x + b {F', G} x` when `F` and `F'` are
@@ -310,6 +393,26 @@ both consume Layer 1 and may proceed in parallel.
   `ω (φ_t x) (dφ_t v) (dφ_t w) = ω x v w`. Also, `H (φ_t x) = H x`, and `F (φ_t x) = F x` for
   every differentiable `F` with `{F, H} = 0`: the times `0` and `t` lie in the interval of
   existence `maximalIntegralCurveInterval X_H x`, which is preconnected.
+- **Comparison with Tau Ceti's globally Lipschitz Hamiltonian flow.** Let `V`, `σ` and `H` be as
+  in the comparison of Layer 1, with `σ.hamiltonianVectorField H` of class `C¹` (for instance `H`
+  of class `C²`, by `contDiff_hamiltonianVectorField`) and
+  `hX : LipschitzWith K (σ.hamiltonianVectorField H)`: the hypotheses of
+  `SymplecticForm.hamiltonianFlow` and of the uniqueness of maximal integral curves. Write
+  `X = σ.constSmooth.hamiltonianVectorField H`.
+  - For every `x : V`, `maximalIntegralCurveInterval X x = Set.univ`, and for every `t : ℝ`,
+    `maximalIntegralCurve X x t = σ.hamiltonianFlow H hX t x`.
+  - Proof: by the field comparison and `SymplecticForm.hasDerivAt_hamiltonianFlow`, the orbit
+    `s ↦ σ.hamiltonianFlow H hX s x` is an integral curve of `X` through `x` on every open interval
+    containing `0`. `IsMIntegralCurveOn.subset_maximalIntegralCurveInterval` gives the first
+    equality, and the uniqueness statement `IsMIntegralCurveOn.eqOn_maximalIntegralCurve` the
+    second.
+  - So the flow domain of `X` is all of `V × ℝ`. Read through this equality, `mfderiv_eq_fderiv`
+    and `SymplecticForm.fromTangentSpace_constSmooth_apply`, the symplecticity statement of
+    Milestone 2 for `σ.constSmooth` and a smooth such `H` is Tau Ceti's
+    `apply_fderiv_hamiltonianFlow`, and its conservation of `H` is `hamiltonianFlow_conserves`:
+    the conservation and symplecticity theorems of the two developments agree where both apply.
+    The flows of this layer carry no Lipschitz hypothesis; this comparison concerns only the
+    fields to which both constructions apply.
 - **Liouville's theorem.** For a symplectic form on a finite-dimensional real vector space `V`
   (`SymplecticForm.constSmooth`), `H` smooth, and `(x, t)` in the flow domain of `X_H`,
   `(fderiv ℝ φ_t x).det = 1`. Hence `φ_t` preserves the additive Haar measure `μ` of `V`:
@@ -512,6 +615,21 @@ One owner per shared construction. Each entry states this roadmap's side of the 
     can be stated with the Hamiltonian vector field and the Poisson bracket of Layer 1, as
     extensions of this API; this roadmap provides no second Hamiltonian vector field and no
     second Poisson bracket for them.
+- **Heegaard Floer, Lane F2.1 (#957), and symplectic geometry (#1049).** F2.1 builds the strongly
+  nondegenerate contraction inverse in Tau Ceti's shared symplectic API, following Layer 1: on
+  arbitrary covectors, with its smooth dependence on the base point, and with its `dF`
+  specialization to `hamiltonianVectorField`; it uses the same inverse on general one-forms for
+  the Moser field. The SymplecticGeometry roadmap consumes that construction and the Hamiltonian
+  API of this roadmap.
+  - There is one contraction inverse. Layer 1 states it in that order, the inverse on arbitrary
+    covectors and its smooth dependence before the `dF` specialization, at this roadmap's
+    generality: a strongly nondegenerate form on a Banach manifold. Its finite-dimensional uses
+    are the case `[FiniteDimensional ℝ E]`, where nondegeneracy implies strong nondegeneracy
+    (`isStronglyNondegenerate_of_finiteDimensional`).
+  - The comparisons are this roadmap's: the `dF` specialization (Layer 1), the inverse and the
+    Hamiltonian vector field of a constant form against Tau Ceti's (Layer 1), and the maximal
+    flow against Tau Ceti's globally Lipschitz flow (Layer 2). No second contraction inverse and
+    no second Hamiltonian vector field is built.
 
 ## References
 
